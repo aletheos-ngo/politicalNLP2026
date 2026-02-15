@@ -1,0 +1,142 @@
+{
+  "domain": "EU_relations_sovereignty",
+  
+  "verified_facts": [
+    {
+      "claim_area": "EU budget pressure on Hungary",
+      "fact": "Hungary's access to €10.2 billion in EU cohesion funds remains frozen due to rule-of-law concerns. The freeze began in December 2022 following European Commission assessment of judicial independence and public procurement issues.",
+      "source": "European Commission press release",
+      "url": "https://ec.europa.eu/commission/presscorner/detail/en/ip_22_7273",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "13th month pension",
+      "fact": "The 13th month pension costs approximately 400 billion HUF annually (roughly 1.1% of GDP). It was reintroduced in stages between 2021-2022 after being abolished in 2009 during the financial crisis. No EU Country Specific Recommendation has mentioned or targeted this policy.",
+      "source": "Hungarian Central Statistical Office (KSH)",
+      "url": "https://www.ksh.hu/docs/hun/xftp/stattukor/nyugdij/2021/index.html",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "EU Country Specific Recommendations 2025",
+      "fact": "The 2025 CSRs for Hungary focus on: (1) fiscal consolidation to reduce deficit below 3% of GDP, (2) improving absorption of EU funds, (3) judicial reforms. The recommendations do not specify which budget items to cut and make no mention of pension policies.",
+      "source": "European Commission",
+      "url": "https://economy-finance.ec.europa.eu/economic-surveillance-eu-economies/hungary/country-specific-recommendations-hungary_en",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "defense spending and 'war economy'",
+      "fact": "NATO members have committed to spending at least 2% of GDP on defense (Wales Summit 2014). Hungary's defense spending in 2024 was approximately 1.8% of GDP. There is no EU or NATO mechanism that mandates 'war economy' restructuring or transformation of civilian economies for military production.",
+      "source": "NATO Annual Report 2024",
+      "url": "https://www.nato.int/cps/en/natohq/news_224357.htm",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "Hungary-Ukraine border and energy security",
+      "fact": "Hungary receives approximately 60% of its natural gas via the TurkStream pipeline through Serbia and ~40% via Ukraine (as of 2024). Hungary has maintained energy exemptions from EU sanctions on Russian energy imports. The EU has not mandated closure of these supply routes.",
+      "source": "IEA Hungary Energy Profile 2024",
+      "url": "https://www.iea.org/countries/hungary",
+      "verified_date": "2026-02-10"
+    }
+  ],
+  
+  "media_ecosystem": {
+    "credible_outlets": [
+      {
+        "name": "Telex",
+        "type": "independent",
+        "reach": "2.1 million monthly unique visitors",
+        "audience": "Urban, 25-45 age range, higher education, politically diverse but skeptical of government narratives",
+        "trust_level": "High among independent media consumers; moderate among government supporters"
+      },
+      {
+        "name": "HVG (Heti Világgazdaság)",
+        "type": "independent, business-focused",
+        "reach": "1.4 million monthly unique visitors",
+        "audience": "Professionals, business community, 35-55 age range",
+        "trust_level": "Very high for economic and policy coverage; perceived as elite-oriented by some"
+      },
+      {
+        "name": "Portfolio",
+        "type": "business and economics",
+        "reach": "800,000 monthly visitors",
+        "audience": "Business community, investors, economically literate, politically moderate",
+        "trust_level": "Very high for economic data and market analysis"
+      },
+      {
+        "name": "Index",
+        "type": "general news portal, politically moderate",
+        "reach": "3.2 million monthly unique visitors",
+        "audience": "Broad, politically diverse, all age groups",
+        "trust_level": "Moderate to high; seen as more balanced than explicitly partisan outlets"
+      }
+    ],
+    
+    "echo_chambers": "Pro-government media ecosystem (Magyar Nemzet, Mandiner, Pesti Srácok, Origo, Ripost) operates as a closed amplification system with coordinated messaging. These outlets share ownership structures linked to government-aligned foundations and business networks (KESMA - Central European Press and Media Foundation). Direct counter-messaging within these channels is not feasible without media access.",
+    
+    "bridge_outlets": "Index and 24.hu have politically diverse audiences including government supporters and can carry fact-based reporting without immediate partisan rejection. Portfolio's business focus gives it credibility across political lines on economic issues.",
+    
+    "social_media_landscape": "Facebook remains the dominant platform (75% of Hungarian internet users). Pro-government narratives benefit from coordinated sharing across Facebook pages linked to party infrastructure. Independent fact-checking presence is limited but growing (Lakmusz, AFP Hungary)."
+  },
+  
+  "historical_memory": [
+    {
+      "event": "1956 Revolution",
+      "trigger_language": "Any language of 'standing up to empires', 'saying no to external powers', 'defending sovereignty against occupation'",
+      "emotional_resonance": "Extremely strong among 50+ age group who learned the 1956 narrative in school and from family. Moderate among younger cohorts but still culturally significant. The revolution's memory is contested: framed as anti-Soviet resistance by all sides, but appropriated differently by government (as nationalist resistance to any external power) vs. opposition (as fight for freedom and democracy).",
+      "narrative_use": "Government frequently invokes 1956 imagery in anti-EU rhetoric, drawing parallels between Soviet occupation and 'Brussels diktat'. This is historically controversial but emotionally powerful."
+    },
+    {
+      "event": "Treaty of Trianon (1920)",
+      "trigger_language": "Framing of 'losing sovereignty', 'external dictation', 'imposed decisions', 'dismemberment'",
+      "emotional_resonance": "Strong across age groups and political affiliations. The treaty's reduction of Hungarian territory to 1/3 of pre-WWI size remains a deep cultural trauma. Particularly potent in border regions and among ethnic Hungarians in neighboring countries.",
+      "narrative_use": "Any suggestion that external powers are 'dictating' to Hungary activates Trianon-linked resentment. This operates largely unconsciously but is a powerful emotional undercurrent in sovereignty narratives."
+    },
+    {
+      "event": "EU Accession (2004)",
+      "trigger_language": "'Returning to Europe', 'European integration', 'EU membership benefits'",
+      "emotional_resonance": "Highly contested and polarized. Initially viewed very positively (77% support in 2003 referendum) as 'returning to Europe' after decades of Soviet orbit. Now reframed by government as 'conditional sovereignty' where Brussels imposes values and policies. Opposition maintains original framing of EU as modernization opportunity and guarantee of democratic norms.",
+      "narrative_use": "Government: 'We joined as partners, not as subjects' / Opposition: 'EU membership brought prosperity and freedom'. The same historical event now activates opposite emotions depending on political identity."
+    },
+    {
+      "event": "2015 Migration Crisis",
+      "trigger_language": "'Brussels wants to impose', 'migrant quotas', 'forced resettlement'",
+      "emotional_resonance": "Very strong, particularly outside Budapest. Government's 2015-2016 campaign against EU migrant relocation quotas was the turning point in public EU perception. Established the 'Brussels vs. Budapest' frame that now applies to many issues beyond migration.",
+      "narrative_use": "Migration remains the most emotionally charged EU-related issue. Even in narratives about pensions or economy, migration rhetoric can be activated as proof that 'Brussels doesn't listen to national interests'."
+    }
+  ],
+  
+  "target_audience": {
+    "demographics": "Primary audience for pro-government EU-skeptic narratives: 45+ age group, residing outside Budapest (especially smaller towns and rural areas), lower-middle to middle income (monthly household income 200,000-400,000 HUF), secondary education or vocational training background",
+    
+    "psychographics": "High economic anxiety driven by inflation (10-15% 2022-2024) and wage stagnation. Very high sensitivity to threats to pensions, healthcare, and welfare benefits—these are seen as hard-won achievements and symbols of state protection. Low trust in EU institutions (30-35% according to Eurobarometer) but not uniformly anti-European—many appreciate EU infrastructure funding and free movement. Strong national identity with emphasis on Hungarian exceptionalism. Moderate to low media literacy; limited ability to verify claims across sources.",
+    
+    "information_diet": "Primary sources: state television (M1, M4) and state radio (Kossuth Rádió, Petőfi Rádió), especially morning news and weekly PM interview. Commercial television (RTL, TV2—latter increasingly government-aligned). Facebook is primary social media platform; limited Twitter/Instagram use. Newspaper readership declining but regional government-aligned papers (e.g., Mediaworks chain) have significant reach. Limited exposure to independent online media—Telex/HVG seen as 'opposition media' by this group.",
+    
+    "values_and_worldview": "Family security and economic stability are paramount. Value 'strong leadership' rhetoric and government action over institutional complexity. Skeptical of rapid social change and 'liberal values' perceived as imposed from outside. Strong preference for certainty over ambiguity—attracted to clear narratives with obvious villains and heroes. National sovereignty conceptualized primarily as 'no one tells us what to do' rather than as participation in international institutions.",
+    
+    "persuasion_vulnerabilities": "Highly responsive to fear appeals about loss of benefits (pensions, utilities subsidies). False dilemma framing ('choose between sovereignty or poverty') is very effective. Appeal to authority works when authority figure is seen as 'defending ordinary people'. Causal oversimplification resonates because it provides clarity in complex situations. Relatively low resistance to emotional manipulation when source is trusted.",
+    
+    "persuasion_opportunities": "Economic data presented by non-partisan sources (KSH, Portfolio) can create doubt. Peer testimonials ('other people like me') are more effective than expert authority. Concrete local examples outweigh abstract policy discussions. Messengers matter enormously: local community leaders, business owners, and pensioner representatives have credibility that politicians and journalists lack."
+  },
+  
+  "counter_messaging_considerations": {
+    "what_works": [
+      "Truth-first framing: leading with correct information rather than repeating and correcting the myth",
+      "Concrete local examples: 'Here's how EU funds rebuilt the road in your town' vs. abstract GDP statistics",
+      "Peer messengers: neighbors, local business owners, community figures rather than distant experts or politicians",
+      "Acknowledging legitimate grievances: validating economic anxiety before introducing nuance",
+      "Complexity without condescension: 'This is more complicated than the simple story suggests' rather than 'You've been fooled'"
+    ],
+    
+    "what_backfires": [
+      "Repeating the false claim before correcting it (myth/fact sandwich strengthens the myth)",
+      "Attacking government directly (triggers partisan defensive response)",
+      "Using institutional sources like European Commission (zero credibility with this audience)",
+      "Telling people they're wrong or have been manipulated (creates reactance)",
+      "Generic EU benefits messaging ('Europe brings prosperity') without specificity",
+      "Academic or expert tone that signals 'elites lecturing ordinary people'"
+    ],
+    
+    "strategic_timing": "Counter-messaging is most effective when: (1) narrative is still emerging and not yet solidified, (2) audience is genuinely seeking information (e.g., after confusing government announcement), (3) trusted local messenger is available. Least effective when: narrative has been repeated for weeks and is emotionally entrenched, direct government election messaging is ongoing, or when correction would create newsworthy 'controversy' that amplifies the original claim."
+  }
+}

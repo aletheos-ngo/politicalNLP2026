@@ -1,0 +1,202 @@
+{
+  "domain": "identity_values",
+  
+  "verified_facts": [
+    {
+      "claim_area": "migration and asylum statistics",
+      "fact": "Hungary received 39 asylum applications in 2024 (down from 177 in 2023), among lowest in EU per capita. Transit zone system was declared illegal by ECJ in 2020 and dismantled. Hungary has 'pushback' practices at southern border documented by human rights organizations. Hungarian border fence (175 km with Serbia, 41 km with Croatia) erected 2015. No refugee resettlement quota system currently in force—EU relocation mechanism from 2015 expired.",
+      "source": "UNHCR, Eurostat, Hungarian Immigration Office",
+      "url": "https://www.unhcr.org/refugee-statistics/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "demographics and fertility",
+      "fact": "Hungary's population: 9.6 million (2024), declining approximately 0.3% annually. Total fertility rate: 1.51 children per woman (2024), below replacement rate of 2.1 but above EU average of 1.46. Life expectancy: 76.4 years (below EU average 81.3). Ethnic Hungarian population approximately 91-92%, Roma 3-4%, other minorities 4-5%. Average age at first birth: 29.3 years (2024). Significant emigration: estimated 600,000 Hungarians abroad, primarily in Western Europe.",
+      "source": "KSH (Hungarian Central Statistical Office), Eurostat",
+      "url": "https://www.ksh.hu/demografia",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "family support policies",
+      "fact": "Family housing subsidy (CSOK): up to 10 million HUF for families with 2+ children buying/building home (introduced 2015, expanded 2019). Baby-expecting loan (babaváró): 10 million HUF interest-free loan for married couples under 40 (introduced 2019); forgiven progressively with births. Family tax benefit: significant deductions for families with children. Combined annual cost of family policies: approximately 4.5% of GDP (2024). Fertility rate increased from 1.23 (2011) to 1.51 (2024)—unclear how much attributable to policies vs demographic cycle.",
+      "source": "Hungarian Ministry of Finance, KSH",
+      "url": "https://www.ksh.hu/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "LGBTQ+ rights and legal framework",
+      "fact": "Same-sex marriage not recognized in Hungary. Constitutional amendment (2020) defines marriage as union between man and woman. Same-sex civil partnerships not available. Adoption by same-sex couples prohibited since 2020 constitutional amendment. Gender recognition on documents requires medical certification and was restricted in 2020. 'Child protection' referendum (2022) asked questions about LGBTQ+ content in schools; government claimed victory despite invalid result (turnout 44%, below 50% threshold). Law prohibiting 'portrayal of homosexuality/gender reassignment' to minors in educational materials/media (2021) remains in effect, ruled incompatible with EU law by ECJ (2024) but still enforced.",
+      "source": "ILGA Europe Rainbow Map 2024; European Court of Justice",
+      "url": "https://www.ilga-europe.org/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "religious composition and practice",
+      "fact": "Self-identified Catholics: 39% (2022 census), Calvinists: 11.5%, other Christian: 3%, other religions: 0.6%, atheist/no religion: 18.2%, no answer: 27.2%. Active religious practice significantly lower than identification: approximately 15-20% attend services monthly. Christian heritage culturally important but secularization advanced, especially among under-40. Churches receive state support through agreements, particularly Catholic and Reformed churches.",
+      "source": "KSH Census 2022",
+      "url": "https://www.ksh.hu/nepszamlalas/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "ethnic Hungarian minorities in neighboring countries",
+      "fact": "Ethnic Hungarians in neighboring countries (estimates 2024): Romania (Transylvania): 1.2-1.4 million, Slovakia: 450,000, Serbia (Vojvodina): 250,000, Ukraine (Transcarpathia): 150,000, Austria: 25,000. Simplified naturalization law (2011) granted citizenship to ethnic Hungarians abroad without residency requirement; approximately 1 million citizenships granted 2011-2024. These citizens can vote in Hungarian elections (by mail or at missions). Status Law provides benefits to ethnic Hungarians in neighboring states.",
+      "source": "National census data from neighboring countries; Hungarian Central Statistical Office",
+      "url": "https://www.ksh.hu/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "education and values",
+      "fact": "National Core Curriculum revised 2020 to emphasize 'Christian cultural heritage' and 'national identity.' Mandatory ethics/religion classes in schools—students choose between religious education or ethics. Sex education limited; 'Child protection' law (2021) restricts LGBTQ+ content in schools. Education funding: 4.8% of GDP (2024), below EU average 5.2%. Teacher salaries among lowest in EU (average teacher salary approximately 350,000 HUF/month as of 2024). Significant teacher shortages and strikes 2022-2023.",
+      "source": "Eurostat, OECD Education at a Glance 2024",
+      "url": "https://www.oecd.org/education/",
+      "verified_date": "2026-02-10"
+    }
+  ],
+  
+  "media_ecosystem": {
+    "credible_outlets": [
+      {
+        "name": "Index",
+        "type": "general news portal",
+        "reach": "3.2 million monthly unique visitors",
+        "audience": "Broad, politically diverse, all age groups, urban and regional",
+        "trust_level": "Moderate to high; seen as relatively balanced by opposition, tolerated by government supporters",
+        "notes": "Most politically diverse audience. Can carry identity/values reporting that reaches beyond opposition echo chamber. Important for bridging conversations."
+      },
+      {
+        "name": "Telex",
+        "type": "independent news",
+        "reach": "2.1 million monthly unique visitors",
+        "audience": "Urban, 25-45, higher education, opposition-leaning but includes moderates",
+        "trust_level": "High among opposition, seen as 'liberal bias' by government supporters",
+        "notes": "Strong on human interest stories that can humanize identity issues (Roma families, LGBTQ+ individuals, refugee stories) for opposition audiences."
+      },
+      {
+        "name": "Qubit (science journalism)",
+        "type": "science and society",
+        "reach": "250,000 monthly visitors",
+        "audience": "Educated, curiosity-driven, 25-50, politically diverse",
+        "trust_level": "High for science-based reporting on demographics, health, social issues",
+        "notes": "Non-partisan scientific approach to demographic trends, family policies, social issues. Can reach audiences skeptical of political media."
+      },
+      {
+        "name": "Magyar Narancs",
+        "type": "cultural weekly",
+        "reach": "Limited but influential (150,000 print+online)",
+        "audience": "Intellectual, urban, liberal, 30-60",
+        "trust_level": "High among cultural elites; dismissed by government supporters",
+        "notes": "Important for opinion leader audience but no reach to government-supporting demographic."
+      }
+    ],
+    
+    "echo_chambers": "Pro-government media ecosystem presents cohesive identity narrative: 'Christian Hungary,' 'family-focused nation,' 'resistance to liberal Brussels dictatorship on values,' 'protection of traditional values,' 'defense against migration,' 'gender ideology is foreign imposition.' This framing dominates M1, M2, Kossuth Rádió, Magyar Nemzet, Mandiner, Origo, 888.hu, Ripost. Roma issues covered through 'crime' frame. LGBTQ+ issues as 'child protection.' Migration as 'invasion' or 'demographic threat.' Direct engagement within these outlets impossible—they operate as closed amplification system.",
+    
+    "bridge_outlets": "Religious media can bridge: Catholic weekly Új Ember has some independence from government narrative and can carry social justice messages that resonate with Christian values. Local church bulletins reach churchgoing audiences across political spectrum. Youth culture platforms (music, sports) can carry value messages indirectly. Parenting forums and groups on Facebook operate outside partisan frames when discussing actual child wellbeing vs. abstract 'child protection.'",
+    
+    "social_media_landscape": "Facebook dominant. Identity issues highly polarized: LGBTQ+ rights, migration, Roma issues, 'gender ideology' are trigger topics. However, human interest stories sometimes break through partisan framing—personal testimonies, family stories can generate empathy. TikTok growing platform for younger audiences; some creators successfully address identity issues through humor and personal narrative. YouTube has both right-wing culture war content and progressive identity-focused channels—segregated audiences."
+  },
+  
+  "historical_memory": [
+    {
+      "event": "Treaty of Trianon (1920)",
+      "trigger_language": "'Dismemberment,' 'historic injustice,' 'two-thirds lost,' 'Hungarian brothers and sisters beyond borders,' 'national tragedy'",
+      "emotional_resonance": "Extremely deep across all political orientations and generations. Treaty reduced Hungary to 1/3 of pre-WWI territory. 3.3 million ethnic Hungarians became minorities in neighboring states overnight. Taught in schools as profound national trauma. June 4 is day of national mourning. Creates permanent identity consciousness: Hungarian identity extends beyond current borders; sense of victimhood by great powers; historical mission to protect ethnic Hungarians abroad.",
+      "narrative_use": "Government: 'Nation-protective' policies justified as reversal of Trianon trauma. Citizenship grants to ethnic Hungarians abroad as 'reunification.' Opposition struggles to contest this without appearing 'anti-national.' Any EU criticism of minority policies triggers 'they don't understand our trauma' response. Creates permission structure for ethnic nationalism—'we were victims, not perpetrators, so nationalist policies are defensive, not aggressive.'"
+    },
+    {
+      "event": "1956 Revolution and Soviet repression",
+      "trigger_language": "'Standing up to empires,' 'freedom fighters,' 'resisting foreign domination,' 'David vs Goliath,' 'national pride'",
+      "emotional_resonance": "Very strong among 50+ who learned 1956 narrative from family or school. Revolution celebrated as national heroism against overwhelming force. Creates framework: Hungary as small nation that fights for freedom against empires. Complicated by fact that revolution was crushed—creates tragic hero narrative but also pragmatism about limits of defiance.",
+      "narrative_use": "Government appropriates 1956 imagery for anti-EU/anti-Brussels rhetoric: 'standing up to Brussels like 1956 revolutionaries stood up to Moscow.' Opposition also claims 1956 legacy: 'fighting for democracy and freedom like 1956.' Both sides weaponize revolutionary symbolism. For identity issues: government frames 'traditional values defense' as equivalent to 1956 resistance; opposition frames LGBTQ+ rights/minority rights as continuation of 1956 freedom struggle. Historical memory weaponized for opposite values claims."
+    },
+    {
+      "event": "Communist-era forced atheism and family policy",
+      "trigger_language": "'They wanted to destroy the church,' 'atheist propaganda,' 'we survived,' 'Christian roots,' 'faith in secret'",
+      "emotional_resonance": "Strong among 60+ who experienced Communist religious repression. Churches persecuted, religious education banned, priests imprisoned. Creates narrative: Christian identity was resistance to Communist oppression. Paradoxically, secularization also advanced under Communism—creates tension between 'Christian identity' and actual religious practice.",
+      "narrative_use": "Government frames religious freedom and 'Christian heritage' as recovered from Communist oppression. 'Brussels liberal values' compared to Communist atheism. Resonates with elderly who remember religious persecution. Opposition struggles because liberal values associated with secularism, easily framed as continuation of Communist atheism. Christian Democrats (in opposition) can contest this but small party."
+    },
+    {
+      "event": "2015 Migration crisis and government response",
+      "trigger_language": "'We defended Europe's borders,' 'migrant invasion,' 'Brussels wanted to force quotas,' 'national sovereignty vs. Brussels diktat'",
+      "emotional_resonance": "Extremely strong, defining political event of past decade. Government's 2015-2016 border fence construction and referendum against EU migrant quotas established 'Hungary stands alone against migration' narrative. Visceral fear of uncontrolled migration widespread, amplified by media campaign. Creates permission structure: immigration restriction is existential necessity, not xenophobia.",
+      "narrative_use": "Government's most successful identity narrative. Migration issue shifted Hungarian political landscape permanently. Any opposition openness to migration policy reform immediately exploited as 'they'll open borders.' 'We stopped migration' central to government identity claim. Opposition cannot contest effectively—migration skepticism crosses party lines. Creates template: Brussels imposes 'liberal values,' Hungary resists, Hungary is defender of 'real Europe.'"
+    },
+    {
+      "event": "Roma integration challenges and interethnic tensions",
+      "trigger_language": "'Gypsy crime,' 'they don't want to integrate,' 'work-shy,' 'child protection money abuse,' or alternatively: 'segregation,' 'discrimination,' 'poverty trap'",
+      "emotional_resonance": "Very high and deeply polarized. Non-Roma Hungarians in areas with significant Roma populations express frustration about petty crime, social problems, school segregation. Roma communities experience extreme poverty (50%+ poverty rate), discrimination, segregation. Stereotypes entrenched on both sides. Creates toxic cycle: Roma marginalization → social problems → non-Roma resentment → further marginalization.",
+      "narrative_use": "Government implicitly encourages anti-Roma sentiment through 'law and order' rhetoric and 'public works' programs that segregate Roma. Opposition faces dilemma: defending Roma rights alienates non-Roma voters; staying silent on Roma discrimination violates values. Media ecosystem allows open anti-Roma rhetoric ('gypsy crime') without labeling it hate speech. Roma issues are third rail—politically toxic across spectrum."
+    },
+    {
+      "event": "Gender roles in Magyar culture and post-transition changes",
+      "trigger_language": "'Traditional family,' 'mother's role,' 'natural order,' or alternatively: 'women's emancipation,' 'gender equality,' 'modern family forms'",
+      "emotional_resonance": "Moderately strong and generationally divided. Traditional gender roles (male breadwinner, female homemaker) still culturally influential especially in rural areas and among 50+. However, economic reality requires two-income families. Creates tension: traditional ideals vs. economic necessity. Younger generations more egalitarian but still considerable gender traditionalism.",
+      "narrative_use": "Government's family policy emphasizes traditional gender roles—mother at home is ideal, subsidized through benefits. 'Natural family' rhetoric codes traditional gender roles as national identity. Opposition's gender equality messaging alienates traditional voters. However, government's rhetoric-reality gap creates opening: women's actual labor force participation high, childcare support insufficient, so 'traditional family' policy doesn't match women's lived experience."
+    }
+  ],
+  
+  "target_audience": {
+    "demographics": "Primary audience for government identity narratives: 45+, secondary/vocational education, small towns and rural areas, monthly income 200,000-400,000 HUF. Also: families with young children (receiving family benefits), ethnic Hungarians from neighboring countries (dual citizens). Religious conservatives (active churchgoers) regardless of income/location. For anti-LGBTQ+ messaging specifically: older audiences, religious, less educated, rural—but significant soft support from moderates.",
+    
+    "psychographics": "National identity highly salient—'proud to be Hungarian' despite (or because of) historical traumas. Strong in-group preference and out-group suspicion—applies to both national level (Hungary vs. outsiders) and local level (village insiders vs. outsiders). Family-centric worldview: family is moral and economic unit, not just individuals. Traditional gender roles seen as natural and moral, deviations as threatening. High anxiety about cultural change—'world is changing too fast,' 'values are eroding,' 'what we teach our children.' Religion more cultural identity than practice for many—'Christian heritage' identity without church attendance. Migration fear visceral even in areas with zero migrants—fear of hypothetical threat. LGBTQ+ issues seen through 'child protection' lens: acceptance of adults ('what they do privately') but fierce resistance to 'promotion' to children.",
+    
+    "information_diet": "State TV and radio primary sources for national identity narratives. Local news for community identity. Church attendance (for religious minority) reinforces traditional values. Facebook for community groups—local identity very strong. Minimal exposure to liberal identity discourse—progressive LGBTQ+/gender equality/anti-racism messaging exists entirely outside information environment. When exposed, seems alien and threatening. Intergenerational transmission: grandparents' values heavily influence family identity formation.",
+    
+    "values_and_worldview": "Hierarchical worldview: natural social order exists, disruption is dangerous. Authority respected—strong leaders, traditional institutions (church, family, nation). Binary moral thinking: clear right/wrong, us/them, natural/unnatural. Continuity valued over change: 'what worked for grandparents should work now.' Community cohesion prioritized over individual expression: 'don't stand out,' 'conform to local norms.' Threat sensitivity high: perceive identity-related changes (migration, LGBTQ+ visibility, gender role changes) as threats to community cohesion and children's wellbeing. National pride deeply felt but mixed with historical victimhood—creates defensive nationalism.",
+    
+    "persuasion_vulnerabilities": "Highly responsive to threat framing about children: 'they want to teach your children X' immediately activates defense. Moral disgust reactions powerful—LGBTQ+ issues, Roma issues, migration all trigger disgust for some audiences. Authority endorsement matters: if church leader or respected community figure says something, carries weight. In-group/out-group manipulation effective: 'Brussels/liberals want to force their values on us.' False dilemmas about values: 'traditional family or social decay,' 'national identity or globalism.' Conspiracy theories about demographic replacement, Soros plan, Brussels imposing values widely believed. Appeals to 'protecting children' override other considerations.",
+    
+    "persuasion_opportunities": "Christian social justice messaging: Catholic social teaching emphasizes dignity of migrants, poor, marginalized—can create values-based opening. Personal relationships trump abstract politics: people who know LGBTQ+ person or Roma person have reduced prejudice. Younger generation's attitudes more liberal—generational change happening. Economic security reduces identity threat perception: when jobs/income secure, less scapegoating. Shared humanity appeals can work: specific human stories (refugee family, bullied LGBTQ+ teen) generate empathy that abstract 'rights' talk doesn't. Local integration success stories: 'This Roma family are good neighbors' more persuasive than national statistics."
+  },
+  
+  "counter_messaging_considerations": {
+    "what_works": [
+      "Human interest stories: Personal testimonies from Roma families, LGBTQ+ individuals, integrated migrants create empathy",
+      "Christian social justice framing: Catholic/Protestant teaching about welcoming stranger, defending vulnerable",
+      "Child welfare focus (real): 'Bullied children need protection'—reframe 'child protection' toward actual wellbeing",
+      "Local examples: 'This diverse community thrives' more persuasive than abstract diversity arguments",
+      "Generational bridge: Grandparents who accept LGBTQ+ grandchild—family love trumps ideology",
+      "National pride reframing: 'Hungarians are known for hospitality' appeals to positive identity",
+      "Economic security first: Address economic anxiety before identity issues—reduces threat perception",
+      "Acknowledge tradition: 'Respecting our past while building inclusive future' vs attacking tradition"
+    ],
+    
+    "what_backfires": [
+      "Moral lecturing: 'You're racist/homophobic' creates defensive reaction and reinforces identity position",
+      "Brussels/Western standards: 'This is how it's done in West' triggers resentment and 'cultural imperialism' response",
+      "Abstract rights language: 'Human rights,' 'equality,' 'discrimination' are elite-coded and alienating",
+      "Attacking Christianity: Any suggestion that Christian identity is problematic confirms 'they hate our values'",
+      "Rapid change demands: 'Society must change now' triggers reactance—change must seem organic, not imposed",
+      "Calling out 'hate': Labeling people as hateful for identity views closes down dialogue completely",
+      "Group blame: 'White privilege,' 'majority oppression' alienates working-class Hungarians who feel economically marginalized",
+      "Visibility politics: Pride parades and high-visibility LGBTQ+ events in conservative areas generate backlash",
+      "Ignoring real problems: Roma integration challenges are real—pretending problems don't exist loses credibility"
+    ],
+    
+    "strategic_timing": "Counter-messaging most effective when: (1) No active identity threat campaign—government not running migration or 'gender ideology' fear campaign, (2) Personal connection moment—someone's family member comes out, neighbor is Roma or refugee, (3) Generational transition—younger generation's more liberal attitudes creating family conversations, (4) After economic security improvement—less scapegoating when economy stable. Least effective when: (1) Election campaign—identity mobilization fully activated, (2) External pressure from EU on identity issues—triggers sovereignty defense, (3) High-profile identity incident (Pride event, migration news)—defensive positions hardened, (4) Economic crisis—scapegoating increases."
+  },
+  
+  "narrative_vulnerabilities": {
+    "government_narrative_weaknesses": [
+      "Contradiction: 'Christian values' rhetoric vs actual low church attendance and secular policies in practice",
+      "Family policy gap: 'Traditional family' support insufficient—young couples can't afford children despite subsidies",
+      "Youth emigration: Young Hungarians leaving for more liberal societies undermines 'our values are superior' narrative",
+      "Demographics: Despite 'family support,' population still declining—policy isn't working",
+      "LGBTQ+ visibility increasing: Despite legal restrictions, social attitudes shifting among youth",
+      "Roma integration failure: Decades of policy haven't improved Roma situations—suggests government approach doesn't work",
+      "Migration hypocrisy: Hungary has Ukrainian refugees (not called refugees) while rejecting other asylum seekers",
+      "Religious hypocrisy: Government leaders not personally devout—'Christian values' as political tool transparent"
+    ],
+    
+    "opposition_narrative_weaknesses": [
+      "Migration issue: Cannot contest government successfully—public largely supports restrictive policy",
+      "Urban-rural divide: Liberal values messaging alienates rural/small-town Hungarians",
+      "Elite-coded: Identity politics language (intersectionality, privilege, etc.) incomprehensible and off-putting",
+      "No positive national identity: Opposition defines against nationalism but offers no alternative national vision",
+      "Christian values: Liberal parties seen as anti-Christian—hard to claim Christian social justice without credibility",
+      "Family policy: Opposition criticized government family subsidies but has no compelling alternative family agenda",
+      "Roma issues: Opposition's pro-Roma rights stance electoral liability—loses non-Roma voters",
+      "Perceived foreign influence: Any identity-liberal messaging easily framed as 'Brussels/Soros values'"
+    ]
+  }
+}

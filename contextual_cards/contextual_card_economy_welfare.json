@@ -1,0 +1,201 @@
+{
+  "domain": "economy_welfare",
+  
+  "verified_facts": [
+    {
+      "claim_area": "inflation and cost of living",
+      "fact": "Hungary's inflation rate peaked at 25.7% year-on-year in January 2023 (highest in EU). As of January 2026, inflation is approximately 4.2%. Food inflation was particularly severe: 40%+ peak in 2022-2023. Real wages declined approximately 8% in 2022-2023 before modest recovery in 2024-2025. Cost-of-living increases have significantly outpaced wage growth 2020-2024.",
+      "source": "Hungarian Central Statistical Office (KSH); Eurostat",
+      "url": "https://www.ksh.hu/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "utility subsidies (rezsicsökkentés)",
+      "fact": "Hungary's residential utility price reduction program (rezsicsökkentés) was introduced 2013. Following energy price spikes in 2022, the program was modified to a tiered system: prices remain subsidized below 'average consumption' thresholds (1729 kWh/year electricity, 1729 m³/year gas for average household); above threshold, market rates apply. Approximately 30% of households exceeded thresholds in winter 2022-2023. Total annual cost of subsidy: approximately 600-800 billion HUF depending on energy prices.",
+      "source": "Hungarian Energy and Public Utility Regulatory Authority; KSH",
+      "url": "https://mekh.hu/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "pensions and 13th month pension",
+      "fact": "The 13th month pension was reintroduced in stages 2021-2022 (after abolition in 2009 during financial crisis). Full implementation costs approximately 400 billion HUF annually (~1.1% of GDP). Hungarian pension-to-wage ratio is 55.3% (2024), below EU average of 58.2%. Real value of pensions declined 2022-2023 due to inflation outpacing indexation, despite 13th month payment. Poverty rate among pensioners: approximately 15% (2024).",
+      "source": "Hungarian Central Statistical Office (KSH); Eurostat",
+      "url": "https://www.ksh.hu/docs/hun/xftp/stattukor/nyugdij/",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "unemployment and labor market",
+      "fact": "Hungary's unemployment rate: 4.2% (January 2026), among lowest in EU. However, labor force participation rate for 15-64 age group is 75.8%, below EU average of 78.3%. Youth unemployment (15-24): 12.1%, below EU average but concerning given overall low unemployment. Real wages in 2025 approximately at 2021 levels after inflation-driven decline. Significant labor emigration: estimated 600,000 Hungarians working abroad (2024).",
+      "source": "KSH Labor Force Survey; Eurostat",
+      "url": "https://www.ksh.hu/munkaeropiaci_adatok",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "healthcare system and spending",
+      "fact": "Hungary's healthcare spending: 7.3% of GDP (2024), below EU average of 10.9%. Significant healthcare worker emigration (estimated 15,000+ doctors/nurses working abroad). Average wait times for non-emergency procedures: orthopedic surgery 8-12 months, ophthalmology 6-10 months, cardiology 4-8 months. Informal payments ('gratitude money'/hálapénz) remain common despite official prohibition. Life expectancy: 76.4 years (2023), below EU average of 81.3 years.",
+      "source": "OECD Health Statistics 2024; KSH",
+      "url": "https://www.oecd.org/health/health-data.htm",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "housing costs and affordability",
+      "fact": "Budapest housing prices increased 85% 2019-2024. Average monthly rent in Budapest: 200,000-300,000 HUF for 2-bedroom apartment. House price-to-income ratio: 11.2 (Budapest), 6.8 (national average), significantly above affordable range of 4-5. Family housing subsidy (CSOK) and mortgage subsidies (baby-expecting loan) introduced 2015-2019. Approximately 40% of 18-34 year-olds live with parents (2024), up from 31% in 2015.",
+      "source": "KSH Housing Statistics; Hungarian National Bank (MNB)",
+      "url": "https://www.ksh.hu/lakasstatisztika",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "food prices and food security",
+      "fact": "Food price index increased 65% from January 2020 to January 2024. Price controls imposed February 2022 on basic goods (flour, sugar, milk, chicken, eggs, sunflower oil) until October 2023. Post-control price increases: cooking oil +40%, chicken +25%, flour +30% within 3 months of deregulation. Approximately 18% of Hungarian households experience food insecurity (difficulty affording adequate nutrition) as of 2024, up from 11% in 2019.",
+      "source": "KSH Price Statistics; Eurostat",
+      "url": "https://www.ksh.hu/ara",
+      "verified_date": "2026-02-10"
+    },
+    {
+      "claim_area": "EU funds and Hungarian economic development",
+      "fact": "Hungary received €43.8 billion from EU budget 2014-2020 (net recipient: approximately €4 billion annually). For 2021-2027 period, Hungary allocated €22 billion from cohesion funds and €7.2 billion from Recovery and Resilience Facility (RRF). As of February 2026: €10.2 billion cohesion funds frozen due to rule-of-law concerns, €6.3 billion RRF funds conditioned on judicial reforms. EU funds contribute approximately 3-5% of Hungarian GDP annually in normal circumstances.",
+      "source": "European Commission; Hungarian Ministry of Finance",
+      "url": "https://commission.europa.eu/funding-tenders/",
+      "verified_date": "2026-02-10"
+    }
+  ],
+  
+  "media_ecosystem": {
+    "credible_outlets": [
+      {
+        "name": "Portfolio",
+        "type": "business and economics focus",
+        "reach": "800,000 monthly visitors",
+        "audience": "Business community, investors, economically literate, 30-55, politically moderate",
+        "trust_level": "Very high for economic data, inflation reports, wage statistics, business environment analysis",
+        "notes": "Most credible source for economic facts across political spectrum. Can present economic data that contradicts government narrative without triggering partisan rejection."
+      },
+      {
+        "name": "G7 (economic analysis platform)",
+        "type": "data journalism, economic analysis",
+        "reach": "350,000 monthly unique visitors",
+        "audience": "Urban professionals, policy-oriented, economically literate, 25-40",
+        "trust_level": "High among educated audiences; seen as left-leaning by government supporters but data-driven approach respected",
+        "notes": "Specializes in making economic data accessible. Charts and infographics widely shared. Effective at visualizing inflation impact, wage trends."
+      },
+      {
+        "name": "HVG (Heti Világgazdaság)",
+        "type": "business weekly",
+        "reach": "1.4 million monthly (print + online)",
+        "audience": "Business professionals, higher education, 35-60",
+        "trust_level": "High for economic/business coverage; perceived as opposition-aligned politically",
+        "notes": "Long-established business outlet. Economic coverage has crossover appeal to government-supporting business owners."
+      },
+      {
+        "name": "Regional newspapers (independent)",
+        "type": "Local news with economic coverage",
+        "reach": "Variable by region; combined several hundred thousand",
+        "audience": "Regional, mixed age, mixed political affiliation",
+        "trust_level": "Moderate to high for local economic conditions",
+        "notes": "When independent regional papers cover local unemployment, business closures, healthcare access—more trusted than national media."
+      }
+    ],
+    
+    "echo_chambers": "Pro-government media frames all economic difficulties as results of 'Brussels sanctions' (on Russia, affecting energy prices), 'Soros speculation' (against forint), 'inherited problems from Socialist governments,' and 'war in Ukraine.' Economic successes attributed to government policy. This framing dominates M1, Kossuth Rádió, Magyar Nemzet, Origo, Ripost. Real economic pain (inflation, healthcare access, wage stagnation) is acknowledged but causally linked to external enemies, never domestic policy. Statistics are selectively cited—unemployment emphasized, real wage decline ignored.",
+    
+    "bridge_outlets": "Portfolio's business focus and non-partisan economic analysis gives it unusual credibility across political divides. Local community Facebook groups where people discuss prices, healthcare waits, job searches operate somewhat outside partisan echo chambers—people share real experiences. Regional business chambers and agricultural cooperatives can carry economic messaging that bridges political divide because they speak to concrete business interests.",
+    
+    "social_media_landscape": "Facebook dominant for discussing economic issues—local community groups, parent groups (discussing school/childcare costs), pensioner groups. Economic frustration expressed more freely in comments on local news stories than in partisan political spaces. TikTok growing among under-30 for cost-of-living memes and housing affordability content. YouTube used for financial advice content—some politically neutral personal finance channels have large followings."
+  },
+  
+  "historical_memory": [
+    {
+      "event": "2008-2009 Financial crisis and IMF intervention",
+      "trigger_language": "'Austerity measures,' 'IMF diktat,' 'forced pension cuts,' 'economic collapse,' 'unemployment line'",
+      "emotional_resonance": "Extremely strong across all age groups employed in 2008-2009. IMF-mandated reforms included public sector wage cuts, pension reductions, healthcare co-payments, VAT increases. Lasting trauma: savings destroyed, jobs lost, homes foreclosed. Creates framework: 'International institutions (IMF then, EU now) impose pain on Hungarians.' Anyone who experienced 2008-2009 deeply fears return to that insecurity.",
+      "narrative_use": "Government explicitly frames EU conditionality as replay of IMF austerity: 'Brussels wants to impose hardship like IMF did.' Economic insecurity appeals rooted in 2008-2009 fear. Opposition struggles because Socialist-Liberal government oversaw crisis and IMF deal—historically associated with economic pain. Economic stability narrative ('we prevented return to 2008') extraordinarily powerful."
+    },
+    {
+      "event": "Socialist government austerity (2006-2009): Őszöd speech and 'Bokros package'",
+      "trigger_language": "'100 days,' 'emergency measures,' 'doctor visit fees,' 'university tuition,' 'they lied about economic conditions'",
+      "emotional_resonance": "Very strong among 40+ who remember introduction of healthcare co-payments, university tuition fees, pension freezes. Őszöd speech admission ('we lied morning, noon and night') about real economic situation created lasting association: left-wing governments = economic deception and austerity. Each economic reform proposal triggers 'Bokros package' fear ('hidden austerity').",
+      "narrative_use": "Government uses Őszöd + Bokros to innoculate against all opposition economic proposals: 'They'll bring back austerity.' Any discussion of reform (pension sustainability, healthcare funding) immediately compared to 2006-2009 austerity. Opposition cannot propose structural reforms without triggering this trauma. Economic populism (13th month pension, utility subsidies) positioned as protection against return to austerity."
+    },
+    {
+      "event": "1990s hyperinflation and economic transition chaos",
+      "trigger_language": "'Economic uncertainty,' 'savings wiped out,' 'job losses,' 'factory closures,' 'worthless currency'",
+      "emotional_resonance": "Strong among 60+ who lived through transition. Hyperinflation peaked at 35% (1991). Mass unemployment as state industries privatized/closed. Life savings destroyed multiple times. Creates deep anxiety about economic instability. 'At least under Communism we had security' sentiment common among elderly. Every economic shock (inflation 2022-2023) reactivates transition trauma.",
+      "narrative_use": "Government promises 'stability and security'—direct contrast to transition chaos. Welfare measures (13th pension, utility subsidies) presented as social protection absent in 1990s. Opposition associated with parties that oversaw transition, carrying burden of 1990s economic pain. Economic insecurity appeals tap into generational trauma."
+    },
+    {
+      "event": "Communist-era shortages and informal economy",
+      "trigger_language": "'Empty shelves,' 'connections matter,' 'getting by,' 'making do,' 'second economy'",
+      "emotional_resonance": "Moderate among 65+ who remember goods shortages, queuing, reliance on informal networks to obtain necessities. Creates both nostalgia for 'security' and memory of inefficiency/corruption. Informal economy skills (growing food, bartering, side work) still present. Mixed emotions: hardship but also community solidarity.",
+      "narrative_use": "Government rarely invokes Communist era directly but uses implicit contrast: 'full shelves, available goods' (even if expensive). When food prices spike or goods shortages occur (e.g., 2022 baby formula shortage), triggers Communist-era anxiety. Opposition cannot use Communist-era hardship because right-wing has monopoly on anti-Communist rhetoric."
+    },
+    {
+      "event": "Early 2010s utility price reductions (rezsicsökkentés launch)",
+      "trigger_language": "'They're taking away utility subsidies,' 'returning to market prices,' 'tripling of bills,' 'Brussels wants market rates'",
+      "emotional_resonance": "Very strong especially among lower-income households and pensioners who remember 2010-2013 period when utility bills consumed 25-30% of household income. Utility price reductions (2013-2015) saved average household 30,000-50,000 HUF/month. Experienced as direct, tangible benefit. Creates powerful association: Fidesz = protection from utility costs.",
+      "narrative_use": "Government's most successful economic narrative. 'Opposition/Brussels wants to end utility subsidies' is immediately credible because people remember high bills pre-2013. Any mention of 'market prices' or 'energy market reform' triggers fear. Opposition cannot propose energy policy reform without this weapon being deployed. Defense of utility subsidies connects to household security and becomes sovereignty issue ('Brussels wants Hungarians to freeze')."
+    }
+  ],
+  
+  "target_audience": {
+    "demographics": "Primary audience for government economic narratives: 45+ (especially pensioners), outside Budapest, lower-middle to middle income (200,000-450,000 HUF household income), secondary/vocational education. Also: families with young children benefiting from family subsidies (CSOK, baby-expecting loan, family tax benefits). Public sector workers (teachers, healthcare workers, civil servants) dependent on government wage policies.",
+    
+    "psychographics": "Economic anxiety is existential and constant. Inflation 2022-2023 was deeply traumatic—many still recovering financially. Zero financial buffer: unexpected expense of 50,000 HUF is crisis. Utility bills, food prices, medication costs dominate financial consciousness. Strong loss aversion: threat of losing benefits (13th pension, utility subsidies, family benefits) far more motivating than promise of gains. Economic nationalism present: 'foreign-owned companies exploit us' sentiment coexists with desire for Western-level prosperity. Deep pessimism about economic trajectory ('West is getting richer, we're falling behind') but fear change will make things worse. Strong family-centric economic thinking: willing to sacrifice personal consumption for children/grandchildren.",
+    
+    "information_diet": "Primary economic information sources: personal experience (grocery prices, utility bills, gas prices), peer networks (community gossip about prices, job losses, wait times), state media economic reports (M1, Kossuth Rádió—emphasize positive indicators like unemployment, blame inflation on war/Brussels). Some exposure to commercial TV news. Facebook community groups where people share price complaints and money-saving tips. Minimal exposure to economic analysis or alternative explanations for inflation/wage trends. Economic data viewed skeptically ('statistics lie') but personal experience trusted absolutely.",
+    
+    "values_and_worldview": "Economic security is moral imperative—family welfare trumps all other values. View economic life as zero-sum: someone's gain is someone else's loss. Strong belief in need for state protection against market forces ('capitalism without protection is cruel'). Multigenerational household economics common: grandparents help with childcare, parents support adult children, reverse support flows. Pension is often family resource, not individual income. 'Hard work' valued but belief that hard work alone brings success has eroded ('connections and luck matter more'). Willing to trade political freedoms for economic security—'democracy doesn't feed my family.' Economic grievances moralized: poverty is structural injustice, not personal failure.",
+    
+    "persuasion_vulnerabilities": "Highly susceptible to loss framing ('they'll take away your pension/subsidies'). Economic fear appeals overwhelming effective—displace all other considerations. False dilemmas about economic trade-offs persuasive ('choose between sovereignty or poverty,' 'EU funds or national control'). Statistical manipulation works because numeracy limited—can't evaluate economic data critically. Appeal to economic nationalism effective ('foreign companies exploit Hungary'). Conspiracy theories about economic manipulation (Soros speculation, Brussels economic blackmail) widely believed. Short-term economic thinking: immediate benefits valued over long-term sustainability.",
+    
+    "persuasion_opportunities": "Personal economic experience creates openings: when people's bills are high despite subsidies, when wait times increase, when adult children emigrate for economic opportunity. Peer testimonials powerful: neighbor explaining medical debt, local business owner discussing costs, teacher discussing leaving profession for economic reasons. Concrete, local economic facts more persuasive than abstract statistics. Future-oriented framing for grandchildren ('what economy/healthcare will they inherit?') can overcome short-termism. Economic dignity appeals resonate: 'Hungarians deserve better than this' more effective than technical economic arguments."
+  },
+  
+  "counter_messaging_considerations": {
+    "what_works": [
+      "Personal story format: 'Maria from Miskolc' explaining her economic situation more effective than statistics",
+      "Future-focused: 'What will our children's economic opportunities be?' rather than present blame",
+      "Acknowledge pain: 'Inflation hurt everyone; here's what would help' rather than minimizing suffering",
+      "Peer messengers: Local business owners, community leaders discussing economic concerns have credibility",
+      "Comparative local examples: 'This town got EU infrastructure funds, that town didn't—here's the difference'",
+      "Service delivery focus: 'Why our healthcare system is struggling' connects economics to lived experience",
+      "Dignity framing: 'Hungarians deserve prosperity, not just survival' vs technical economic arguments",
+      "For younger audiences: 'Housing affordability/opportunity' messages resonate strongly"
+    ],
+    
+    "what_backfires": [
+      "Statistics without stories: GDP growth figures mean nothing when people's bills are high",
+      "Austerity language: Any hint of 'reforms require sacrifice' triggers 2008 trauma",
+      "Blaming individuals: 'Budget better, work harder' messaging alienates struggling families",
+      "Brussels/EU as economic authority: Reinforces 'foreign diktat' narrative",
+      "Elite-coded language: 'Fiscal sustainability,' 'structural reforms,' 'market liberalization' alienate non-expert audiences",
+      "Minimizing economic pain: 'Actually, you're better off than you think' insults lived experience",
+      "Taking away existing benefits: 'End utility subsidies' immediately toxic regardless of rationale",
+      "Trade-off framing: 'Accept short-term pain for long-term gain' fails due to present-bias and trauma",
+      "Comparing to Western Europe: 'Other countries manage without subsidies' triggers resentment"
+    ],
+    
+    "strategic_timing": "Counter-messaging most effective when: (1) Economic benefits failing to materialize (promised prosperity not arriving creates openness to alternative explanations), (2) Personal economic crisis moment (healthcare emergency, job loss, adult child emigration) opens reassessment window, (3) Visible inequality: when Fidesz-connected wealth contrasts with local economic struggles, (4) After elections: less defensive partisan mobilization. Least effective when: (1) Major welfare initiative just announced (attention on benefit, not sustainability), (2) Economic crisis peak (survival mode, not analysis mode), (3) Campaign period (partisan defenses maximized), (4) External economic pressure from EU (triggers rally-around-flag on economic sovereignty)."
+  },
+  
+  "narrative_vulnerabilities": {
+    "government_narrative_weaknesses": [
+      "Contradiction: Economic nationalism vs visible foreign investment dependence (German auto plants, Chinese battery factories)",
+      "Youth emigration: 'Economic success' narrative undermined by 600,000 working abroad",
+      "Healthcare deterioration: Cannot be blamed on Brussels—clearly domestic resource allocation failure",
+      "Inflation 2022-2023: Government initially denied problem, then blamed external factors—lost credibility",
+      "Utility subsidy modification 2022: Broke promise of 'forever' utility subsidies—showed subsidies conditional",
+      "Visible inequality: Fidesz-connected oligarch wealth accumulation while public services decline creates dissonance",
+      "Frozen EU funds: 'Brussels blackmail' narrative weakens as infrastructure projects stall",
+      "Real wage decline: Despite low unemployment, living standards fell 2022-2024—economic 'success' narrative hollow"
+    ],
+    
+    "opposition_narrative_weaknesses": [
+      "Historical baggage: Associated with 2008 crisis, IMF austerity, Őszöd lies—permanent credibility damage on economics",
+      "No positive economic vision: Defined by criticism, not alternative program",
+      "EU-dependency framing: Opposition's emphasis on EU funds reinforces 'Brussels puppet' attacks",
+      "Elite economic literacy: Technocratic policy language alienates economically anxious voters",
+      "Cannot compete on welfare populism: Any opposition benefit promise met with 'you'll bring back austerity'",
+      "Urban bias: Economic platform speaks to Budapest professionals, not rural/small-town economic anxieties"
+    ]
+  }
+}

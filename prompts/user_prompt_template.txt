@@ -1,0 +1,235 @@
+# NARRATIVE CLUSTER ANALYSIS REQUEST
+
+You are being provided with aggregated data from a narrative cluster—a collection of articles that share similar narrative framing. Your task is to analyze this cluster and produce a structured Narrative Intelligence Brief.
+
+---
+
+## CLUSTER METADATA
+
+{cluster_metadata_json}
+
+---
+
+## REPRESENTATIVE NARRATIVE FRAMES
+
+These are 10-15 frames sampled from the cluster to represent the dominant narrative patterns. Each frame shows how an actor performs an action or makes a claim about a target, often with causal reasoning.
+
+{narrative_frames_json}
+
+---
+
+## MANIPULATION TECHNIQUES DETECTED
+
+These techniques were identified across articles in the cluster using a simplified SemEval propaganda taxonomy. Frequency indicates how many articles in the cluster employed each technique.
+
+{manipulation_techniques_json}
+
+---
+
+## REPRESENTATIVE ARTICLE EXCERPTS
+
+These are 3-5 article excerpts with full source attribution, showing the narrative in context.
+
+{article_excerpts_json}
+
+---
+
+## CONTEXTUAL CARD (Analyst-Verified Information)
+
+This card contains verified facts, media ecosystem information, and audience context for this narrative's thematic domain. When proposing counter-strategies, you MUST use ONLY the information in this card. Do not generate statistics, URLs, or institutional claims from your own knowledge.
+
+{contextual_card_json}
+
+---
+
+# GENERATE NARRATIVE INTELLIGENCE BRIEF
+
+Produce a JSON object following this exact schema. Pay close attention to the constraints specified for each section.
+
+```json
+{
+  "brief_metadata": {
+    "cluster_id": "string (from input metadata)",
+    "cluster_label": "string (brief descriptive label of the narrative)",
+    "date_generated": "YYYY-MM-DD",
+    "analysis_period": "YYYY-MM-DD to YYYY-MM-DD (from input)",
+    "n_articles": "integer (from input)",
+    "n_sources": "integer (from input)"
+  },
+
+  "A_narrative_summary": {
+    "_constraint": "Generate 3-5 descriptive bullet points that summarize the narrative cluster. Each bullet must reference specific actors, specific claims, and causal logic from the provided frames. Use strictly neutral, descriptive language—no evaluative terms like 'dangerously', 'falsely', 'misleadingly'. Each bullet must be directly traceable to the input data.",
+    
+    "bullets": [
+      "Descriptive bullet point 1 with specific actor and claim",
+      "Descriptive bullet point 2 with causal reasoning",
+      "..."
+    ]
+  },
+
+  "B_character_map": {
+    "_constraint": "Assign hero/villain/victim roles ONLY where the extracted frames explicitly support them. Each role assignment must include an exact quoted Hungarian text span from the provided frames or excerpts as evidence. If a role is ambiguous or contested across different sources, mark it as 'contested' and explain the contestation. Do NOT infer roles that are not clearly present in the data.",
+    
+    "characters": [
+      {
+        "entity": "Name of political actor, institution, or group",
+        "assigned_role": "hero | villain | victim | contested",
+        "evidence_hu": "exact Hungarian quote from input that supports this role assignment",
+        "source": "source name + publication date",
+        "notes": "optional: explain if role is contested, shifts over time, or has nuances"
+      }
+    ]
+  },
+
+  "C_manipulation_profile": {
+    "_constraint": "Use ONLY the manipulation techniques provided in the input data. Do NOT add techniques that were not detected in the extraction phase. For each technique: provide the exact taxonomy label from the input, the frequency count from the cluster, at least one quoted evidence span in Hungarian, identify the emotional lever it targets, and describe its cognitive effect. Then analyze how these techniques work together to create the overall narrative effect.",
+    
+    "techniques": [
+      {
+        "technique": "exact label from input (e.g., 'appeal_to_authority', 'causal_oversimplification')",
+        "frequency": "integer from input",
+        "evidence_spans_hu": [
+          "exact Hungarian quote from input",
+          "another example if available"
+        ],
+        "emotional_lever": "fear | anger | resentment | humiliation | pride | anxiety | disgust | hope",
+        "cognitive_effect": "brief description of what this technique does to reasoning (e.g., 'narrows perceived options', 'creates urgency', 'bypasses critical evaluation')"
+      }
+    ],
+    
+    "interaction_pattern": "Describe how these techniques work together in this cluster. For example: 'fear appeal + false dilemma creates tunnel vision and urgency' or 'appeal to authority + loaded language creates unquestioned credibility'",
+    
+    "dominant_emotions": [
+      "list of 2-3 primary emotions targeted by this narrative cluster"
+    ]
+  },
+
+  "D_escalation_assessment": {
+    "_constraint": "Assign ONE level: Monitor | Contextual Concern | High-Risk. This is an analytical assessment of escalation potential, NOT a content policy violation label. You MUST cite specific escalation signals present (or absent) in the data. Escalation signals include: dehumanization of outgroups, exclusion rhetoric ('they are not real Hungarians'), calls to action beyond democratic participation, eliminationist language, explicit or implicit threats of violence. If no clear signals are present, assign 'Monitor'. Provide evidence-based justification.",
+    
+    "level": "Monitor | Contextual Concern | High-Risk",
+    
+    "justification": "Evidence-based explanation for this level assignment, citing specific patterns from the data",
+    
+    "escalation_signals": [
+      {
+        "signal_type": "dehumanization | exclusion_rhetoric | call_to_action | eliminationist | threat_of_violence | none",
+        "evidence_hu": "quoted Hungarian text showing this signal, or 'not detected' if absent",
+        "severity": "explanation of why this signal matters and its potential trajectory"
+      }
+    ],
+    
+    "trajectory": "Based on available data, is this narrative: escalating | stable | de-escalating | insufficient_data_to_assess"
+  },
+
+  "E_counter_strategy": {
+    "_constraint": "Generate up to 3 response options (you may generate 1, 2, or 3—not all may be appropriate). Each must be labeled by type (counter_narrative, alternative_narrative, or non_engagement). Each must specify: messenger type with rationale, moral frame aligned with audience values, a concrete anti-thesis formulation in Hungarian with English translation, backfire risk assessment, and confidence level. ALL external facts cited must come from the contextual card—you must trace each fact to its exact source in the card. Follow the de-escalation principles from the system prompt as mandatory constraints. If recommending non-engagement, thoroughly justify why engagement would be counterproductive.",
+    
+    "response_options": [
+      {
+        "type": "counter_narrative",
+        "_description": "Direct rebuttal using truth-first framing. Lead with the correct fact, name the manipulation technique being used, then provide the correction. Do NOT restate the false claim before correcting it.",
+        
+        "strategy_summary": "One sentence describing the approach of this counter-narrative",
+        
+        "messenger": {
+          "type": "community_leader | subject_matter_expert | peer_voice | affected_person",
+          "specific_suggestion": "Concrete suggestion (e.g., 'independent economist with media presence' or 'pensioner community leader')",
+          "rationale": "Why this messenger type would be credible—reference media ecosystem from contextual card",
+          "avoid": "Messenger types to avoid (e.g., 'government official' triggers reactance in this audience)"
+        },
+        
+        "moral_frame": {
+          "frame": "The value system this message appeals to (must be the audience's values, not the communicator's values)",
+          "rationale": "Why this frame resonates with the target audience—reference audience context from contextual card"
+        },
+        
+        "anti_thesis": {
+          "hu": "A concrete model sentence in Hungarian—a rebuttal opening or dialogue entry point that follows truth-first principles",
+          "en": "English translation of the above",
+          "technique_named": "Which manipulation technique from Section C this explicitly identifies (following de-escalation principle 2)"
+        },
+        
+        "verified_fact_used": {
+          "fact": "The specific fact from the contextual card used in this counter-narrative",
+          "source": "Exact source citation from the contextual card (must match exactly)"
+        },
+        
+        "backfire_risk": {
+          "level": "low | medium | high",
+          "justification": "What could go wrong with this approach and why"
+        },
+        
+        "confidence": {
+          "level": "low | medium | high",
+          "justification": "What evidence or reasoning supports or weakens confidence in this recommendation"
+        }
+      },
+      
+      {
+        "type": "alternative_narrative",
+        "_description": "Positive reframing that addresses the underlying grievance or emotional need the narrative exploits WITHOUT repeating the false claim. Must introduce something genuinely novel—not generic values like 'democracy is good' or 'Europe brings prosperity'. Must acknowledge emotion first (de-escalation principle 1).",
+        
+        "strategy_summary": "One sentence describing the approach",
+        
+        "messenger": {
+          "type": "...",
+          "specific_suggestion": "...",
+          "rationale": "...",
+          "avoid": "..."
+        },
+        
+        "moral_frame": {
+          "frame": "...",
+          "rationale": "..."
+        },
+        
+        "anti_thesis": {
+          "hu": "Model sentence in Hungarian that reframes toward a positive narrative",
+          "en": "English translation",
+          "underlying_grievance_addressed": "What real concern or need this speaks to (e.g., economic anxiety, sovereignty concern)"
+        },
+        
+        "novelty_check": "Explain what is genuinely NEW or unexpected in this framing—why it's not just a generic platitude",
+        
+        "backfire_risk": {
+          "level": "...",
+          "justification": "..."
+        },
+        
+        "confidence": {
+          "level": "...",
+          "justification": "..."
+        }
+      },
+      
+      {
+        "type": "non_engagement",
+        "_description": "Recommend NOT responding to this narrative or specific claims within it. You must thoroughly justify why engagement would amplify the narrative or produce reactance. This is a valid strategic choice when response would do more harm than good.",
+        
+        "justification": "Detailed explanation of why non-engagement is recommended for this narrative or sub-claim",
+        
+        "amplification_risk": "Specific description of what would happen if this narrative were directly challenged—how would it gain energy, spread further, or become more entrenched?",
+        
+        "alternative_action": "What should be done instead? (e.g., 'monitor for escalation signals', 'strengthen positive messaging in adjacent thematic space', 'wait for natural decay', 'focus resources on more winnable narratives')",
+        
+        "confidence": {
+          "level": "low | medium | high",
+          "justification": "What supports this recommendation"
+        }
+      }
+    ]
+  }
+}
+```
+
+**CRITICAL REMINDERS:**
+
+1. Every character role in Section B must have a quoted Hungarian evidence span from the input
+2. Every technique in Section C must come from the input—no additions
+3. Every fact cited in Section E must come from the contextual card—trace it to source
+4. Section E must follow all 6 de-escalation principles from system prompt
+5. Use Hungarian quotes exactly as they appear in the input—no modifications
+6. When uncertain, prefer caution: acknowledge limitations, note insufficient data, or recommend monitoring
+
+**GENERATE THE BRIEF NOW.**

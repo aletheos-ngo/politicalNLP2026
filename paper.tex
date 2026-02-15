@@ -1,0 +1,776 @@
+% LREC 2026 Example; 
+% LREC Is now using templates similar to the ACL ones. 
+\documentclass[10pt, a4paper]{article}
+
+\usepackage[review]{lrec2026} % this is the new style
+% the 'review' option anonymizes the paper following submission guideline
+% the 'final' option produces the camera ready version (non anonymized)
+% default version is 'final', so use review option for submission
+\newcommand{\todo}[1]{\textbf{\textcolor{red}{[TODO: #1]}}}
+
+\title{From News Streams to Narrative Intelligence Briefs: LLM-Assisted Political Discourse Analysis in the Hungarian 2026 Pre-Election Context}
+
+\name{Ekaterina Loginova, Maxim Ermakov, Stephan Khramov, Mikhail Amelotti} 
+
+\address{Aletheos, Aletheos, Aletheos \\
+         Address1, Address2, Address3 \\
+         author1@xxx.yy, author2@zzz.edu, author3@hhh.com\\
+         \{author1, author5, author9\}@abc.org\\}
+
+
+\abstract{
+Civil-society organisations, journalists, and fact-checkers monitoring elections require scalable ways to convert high-volume political news into actionable narrative intelligence, yet most NLP pipelines stop at classification outputs that are difficult to operationalise. We present a methodology-driven case study assessing whether large language models, constrained by an explicit analytical schema and multi-stage validation, can reliably transform Hungarian pre-election news into structured narrative intelligence briefs. Using RSS-scraped content from 21 Hungarian-language sources (574 election-relevant articles), we implement a multi-stage pipeline: (1) per-article extraction of narrative event frames grounded in the Narrative Policy Framework (actor--action--target with role assignment and causal claims) and manipulation techniques from the SemEval propaganda taxonomy; (2) embedding-based clustering of narrative frames with domain classification; and (3) constrained brief generation producing five structured sections---narrative summary, character map, manipulation profile, escalation assessment, and counter-strategy---where counter-strategies are grounded in verified external sources via curated contextual cards and constrained by evidence-based de-escalation principles. We evaluate extraction quality through LLM-as-judge assessment across prompt versions, brief quality through a multi-model judging protocol (ChatGPT~4o, Claude Sonnet~4.5, Gemini Pro), and document key failure modes including messenger mismatch in polarised media environments, overconfident role assignment, and moral frame projection in counter-strategies. We conclude with implications for trustworthy human-in-the-loop political NLP and the practical limits of LLM-assisted narrative intelligence.
+ \\ \newline \Keywords{narrative intelligence, political discourse analysis, large language models, propaganda detection, Narrative Policy Framework, election monitoring, disinformation, human-in-the-loop NLP} }
+
+\begin{document}
+
+\maketitleabstract
+
+%----------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+Election monitoring has become a core task for civil-society organisations, independent media, and international observers. During contested elections, political discourse intensifies across news outlets and social media, producing volumes of content that exceed manual analysis capacity. Our working corpus of 574 election-relevant Hungarian articles contains approximately 240{,}000 words; reading this material alone would require roughly 15~hours at average adult reading speed (265~WPM), before any analytical work begins. The Atlantic Council's DFRLab reports a comparable challenge: their analysis of pro-Kremlin narratives required ``four DFRLab researchers fluent in Russian to review all 10{,}783 articles and manually assess whether they fit into any of the five overarching narratives'' over ``several months'' \citep{atlanticcouncil2024narrative}---a considerable time investment that, without automation, bottlenecks any timely response. For rarer languages, the availability of qualified analysts is even more constrained.
+
+Practitioners need not merely to detect individual false claims but to understand the \emph{narrative landscape}: who is being convinced of what, by whom, through which emotional and rhetorical mechanisms---and what responsible counter-strategies are available \citep{resist2019}.
+
+Two bodies of NLP work address parts of this need. Propaganda technique detection, advanced through the SemEval shared tasks \citep{dasamartino2019fine, piskorski2023semeval}, can identify \emph{how} content manipulates. Narrative structure extraction, grounded in the Narrative Policy Framework \citep[NPF;][]{jones2010narrative, shanahan2018narrative}, can identify \emph{who} is cast in which role and \emph{what} causal story is being told. Large language models have shown promising performance on both tasks \citep{ziems2024can, tornberg2023chatgpt}. Yet neither detection nor extraction alone produces what practitioners use: \emph{structured intelligence briefs} that synthesise narrative analysis with actionable, country-specific counter-strategy recommendations.
+
+Meanwhile, the counter-propaganda community has developed sophisticated frameworks for crafting responses to disinformation---including the GAMMMA+ campaign design model \citep{ran2022alternative}, inoculation theory \citep{vanderlinden2017inoculating, roozenbeek2022psychological}, and the principled distinction between counter-narratives (direct rebuttal) and alternative narratives (reframing that bypasses the false claim) \citep{ran2022alternative, briggs2015western}. These frameworks are practitioner-oriented and manual; they have not been integrated into computational pipelines.
+
+This paper bridges the two worlds. We ask: \textbf{How reliable and useful are LLM-generated narrative intelligence briefs when narrative extraction is grounded in NPF and SemEval taxonomies, and counter-strategy generation is constrained by evidence-based counter-propaganda frameworks and verified external sources?}
+
+We contribute: (1)~a reproducible pipeline from raw news to structured briefs, combining per-article NPF frame extraction, SemEval-taxonomy manipulation detection, embedding-based narrative clustering, and constrained brief generation; (2)~a counter-strategy schema that operationalises practitioner frameworks (GAMMMA+, inoculation, moral reframing, counter- vs.\ alternative narratives) within LLM-assisted generation, constrained by curated contextual cards rather than parametric LLM knowledge; (3)~an empirical evaluation of extraction quality, brief usefulness via LLM-as-judge and preliminary human review, and documented failure modes on a real pre-election Hungarian news corpus; and (4)~a documented failure taxonomy for LLM-assisted narrative intelligence, with particular attention to counter-strategy quality.
+
+Our setting---the Hungarian parliamentary election of April 2026---provides a high-pressure stress test: a polarised media ecosystem with significant state media influence, strong historical memory triggers, and active narrative contestation across the political spectrum \citep{resist2019}. We scope our claims explicitly: this is a methodology demonstration on a constrained but realistic dataset, evaluating analyst-support capabilities rather than automated decision-making.
+
+
+%----------------------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Narrative frameworks in political discourse.}
+The Narrative Policy Framework (NPF) provides a formal structure for political narratives: a setting, characters assigned to roles (hero, villain, victim), a plot establishing causal relationships, and a moral prescribing action \citep{jones2010narrative, shanahan2018narrative}. Framing theory, particularly Entman's formulation---problem definition, causal interpretation, moral evaluation, and treatment recommendation---provides complementary analytical dimensions \citep{entman1993framing}. In disinformation research, the ARENAS project emphasises that extremist narratives function as ``the battle of stories, not the debate on issues,'' positioning themselves against mainstream framings \citep{arenas2022}. \citet{gehring2023character} formalised a character-role framework drawing on NPF for computational analysis, while \citet{mandravickaite2025narrative} define computational narrative structures in political news as comprising characters, events, causes, and frames. We adopt NPF as our extraction schema because it provides formally defined, extractable components (actors, roles, causal claims, implied solutions) that map directly to the fields practitioners need in intelligence briefs.
+
+\paragraph{Computational propaganda and manipulation detection.}
+The SemEval shared tasks on propaganda technique detection \citep{dasamartino2019fine, piskorski2023semeval, piskorski2024semeval} have established fine-grained taxonomies of rhetorical manipulation techniques---including loaded language, name-calling, flag-waving, appeal to fear, and false dilemma---with associated training data and evaluation benchmarks. These taxonomies have been applied across languages, including recent extensions to Central and Eastern European languages in the SlavicNLP~2025 shared task. While per-span or per-sentence classification is well-studied, the aggregation of detected techniques into narrative-level manipulation profiles remains underexplored. Our work addresses this gap: we extract techniques per article and then aggregate them at the narrative cluster level to produce a manipulation \emph{profile} for each narrative in the brief.
+
+\paragraph{LLMs for political text analysis.}
+Recent work has explored LLMs for political stance detection, claim extraction, and summarisation \citep{ziems2024can, tornberg2023chatgpt}. However, studies have documented systematic failure modes: partisan bias in generated outputs \citep{feng2023partisan}, hallucination of entities and relations \citep{mandravickaite2025narrative, mckenna2023sources}, and cultural flattening when analysing non-English political discourse. The tension between LLM fluency and factual grounding is particularly acute for intelligence briefs, where a plausible but fabricated detail can mislead decision-makers \citep{llms_truth_democracy2025}. Critically, research on counter-propaganda messaging warns that truthful communications ``designed to engage people on a narrative and psychological level are more effective than facts alone'' \citep{carnegie2024countering}---which means that an LLM generating strategic advice must do more than retrieve facts, yet must not fabricate or speculate. Our pipeline addresses this by separating what the LLM may generate freely (narrative analysis grounded in source text) from what it must generate under constraint (counter-strategies bounded by external evidence and established frameworks).
+
+\paragraph{Counter-propaganda frameworks and strategic intelligence briefs.}
+The UK RESIST Counter-Disinformation Toolkit provides a practitioner-oriented schema for disinformation reporting: key insights, event summary, narrative identification, evidence, manipulation analysis, audience assessment, and recommendations \citep{resist2019}. The EU's Radicalisation Awareness Network (RAN) distinguishes counter-narratives (directly rebutting extremist content) from alternative narratives (offering a positive reframing that undermines extremist assumptions without engaging them directly), noting that alternative narratives should introduce ``something novel'' rather than relying on generic values \citep{ran2022alternative, briggs2015western}. The GAMMMA+ framework structures campaign design around Goal, Audience, Messenger, Message, Media, and Action \citep{silverman2016impact}. Research on inoculation (preemptive exposure to weakened forms of manipulation) has shown effectiveness at scale, including Google Jigsaw's prebunking campaigns in Central and Eastern Europe that reached 25\% of Poland's population \citep{roozenbeek2022psychological, jigsaw2023cee}. Moral reframing research demonstrates that arguments couched in the target audience's own moral values are significantly more persuasive than those using the communicator's values \citep{feinberg2015moral}. Our counter-strategy schema operationalises these frameworks: each brief's response section is structured around the counter- vs.\ alternative narrative distinction, grounded in inoculation principles, and constrained to propose specific rebuttals rather than generic advice.
+
+
+%----------------------------------------------------------------------
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Data}
+\label{sec:data}
+
+We collect Hungarian-language political news articles via RSS feeds from 21 sources spanning the broad media spectrum: pro-government outlets (Magyar Nemzet, Magyar H\'irl\'ap, Mandiner, Pesti Sr\'acok, H\'irad\'o, Demokrata), independent media (Telex, Index, 444.hu, HVG, \'Atl\'atsz\'o, Direkt36), opposition-aligned outlets (N\'epszava, Magyar Narancs, M\'erce, 168.hu, Hang.hu), general portals (24.hu, ATV, Portfolio), and the H\'irstart aggregator. Full-text extraction processes RSS feeds using the \texttt{newspaper4k} library with rate limiting (2\,s between requests). Articles are stored with source name, URL, publication timestamp, and full text. Successive collection runs spanning April~2024 to February~2026 are merged, yielding 3{,}708 unique articles after URL-based deduplication across runs.
+
+\paragraph{Relevance filtering.}
+We apply a binary relevance classifier to identify election-related content. The classifier is a single GPT-4o\footnote{All LLM calls in this work use GPT-4o via OpenRouter/LiteLLM unless stated otherwise.} call per article with a Hungarian-language prompt (``Kategoriz\'ald a sz\"oveget: v\'alaszt\'assal kapcsolatos vagy nem v\'alaszt\'assal kapcsolatos'') and Pydantic structured output enforcing a boolean response. Applied to 2{,}515 articles from the most recent collection batch, the filter yields \textbf{574 election-relevant articles} that form the working corpus for all subsequent experiments. We treat this step as preprocessing with acknowledged limitations: it is a single-pass classification with no inter-annotator validation and no reported precision/recall. A small human-annotated validation sample is planned for future work.
+
+
+%----------------------------------------------------------------------
+\subsection{Narrative Extraction Methodology}
+\label{sec:extraction}
+
+We investigate two complementary approaches to narrative extraction from the 574-article corpus: (1)~LLM-based extraction of structured narrative frames grounded in the Narrative Policy Framework~(NPF), followed by frequency-based clustering; and (2)~BERTopic-based topic modelling, applied to both raw article text and NPF-guided summaries. We additionally test a translation-first variant of approach~(1). The goal is to identify the approach that best recovers \emph{narrative structure}---actor--role--target--causal-claim configurations---rather than merely topical groupings.
+
+\subsubsection{Approach~1: NPF Frame Extraction and Clustering}
+\label{sec:npf_extraction}
+
+\paragraph{Extraction schema.}
+Grounded in NPF \citep{jones2010narrative, shanahan2018narrative}, we extract structured frames from each article. The production schema (v4; see below) contains seven core fields per narrative element: \textit{actor} (surface form, normalised if needed), \textit{portrayed\_role} (hero, villain, victim, narrator, neutral, or unclear), \textit{narrative\_function} (claim, evaluation, threat, mobilisation, warning, or policy\_promise), \textit{action\_or\_claim} (what the actor does or says), \textit{target} (surface form or null), \textit{portrayed\_target\_role} (hero, villain, victim, threat, proxy, neutral, unclear, or null), and a nested \textit{causal\_claim} object with three subfields: text, causal marker surface form, and causal relation type (threat, prevention, retaliation, inevitability, zero-sum, justification, or null). The \texttt{threat} and \texttt{proxy} values for target roles were introduced to capture entities framed as abstract dangers and stand-ins for larger antagonists, respectively---distinctions important in Hungarian political rhetoric where ``Brussels,'' ``war,'' and ``migration'' frequently serve these functions.
+
+\paragraph{Extraction configuration.}
+All extraction uses GPT-4o with \texttt{temperature=0} and Pydantic structured output enforcement via LiteLLM. Each article yields a variable-length list of \texttt{NarrativeElement} objects. Processing the full corpus produced \textbf{4{,}266 narrative elements} across 574 articles (mean: 7.4 elements per article). 
+% One extraction failure was logged due to JSON truncation at approximately 58K characters, indicating that very long articles can exceed output limits.
+
+\paragraph{Language setup.}
+Extraction is performed directly on Hungarian text, with prompts in English instructing the model to process Hungarian input. Content fields (actor names, action descriptions, causal claims) are produced in Hungarian; analytical labels (role assignments, function types) are produced in English. This bilingual configuration avoids translation-introduced distortions while leveraging the model's stronger instruction-following in English.
+
+\paragraph{Prompt constraints.}
+The prompt enforces several analytical constraints critical for reliable extraction: (1)~extract only what is explicitly present or linguistically signalled in the text; (2)~one element per actor--claim pair (atomicity); (3)~roles reflect textual construction, not analyst judgment; (4)~causal claims require explicit causal markers (Hungarian grammatical connectors such as \textit{hogy} and \textit{ami} are excluded unless they introduce genuine cause--effect relations); (5)~background and logistics content is excluded unless it explicitly supports a narrative claim, threat, or mobilisation; (6)~no inference of intent, ideology, or policy goals beyond textual evidence. The full prompt is provided in Appendix~\ref{sec:appendix}.
+
+\subsubsection{Iterative Prompt Engineering}
+\label{sec:prompt_engineering}
+
+The extraction prompt underwent four iterations, tracked via Langfuse prompt versioning. This iterative process, conducted through systematic LLM-assisted analysis of extraction outputs, constitutes a methodological contribution in itself: it demonstrates how prompt engineering for structured narrative extraction can be guided by explicit quality criteria.
+
+\paragraph{Version~1 (baseline).}
+A 12-field schema including \texttt{actor}, \texttt{actor\_type}, \texttt{portrayed\_role}, \texttt{action\_or\_claim}, \texttt{target}, \texttt{target\_type}, \texttt{portrayed\_target\_role}, \texttt{causal\_claim} (text + marker), \texttt{normative\_direction}, \texttt{attribution}, \texttt{evidence\_span}, and \texttt{confidence}. Instructions emphasised extracting only what is present and prohibiting intent inference. This version produced clean, well-grounded extractions with good attribution discipline but lacked narrative function typing and suffered from background/logistics pollution (approximately 40\% of extracted elements were analytically low-signal).
+
+\paragraph{Version~2 (schema expansion).}
+Added \texttt{speaker\_role}, \texttt{narrative\_function} (8 categories including \texttt{logistics} and \texttt{background}), expanded \texttt{causal\_claim} with \texttt{causal\_relation\_type}, \texttt{normative\_type}, and \texttt{constructed\_audience}. However, the model largely ignored the new fields, reverting to the v1 schema shape. Diagnosis revealed a \emph{prompt signal-to-noise problem}: 11 numbered instruction blocks plus 4 negative constraint blocks, all at the same hierarchical level, caused the model to satisfice by following easy constraints (be cautious, use null) while silently dropping hard ones (commit to narrative function categories, type causality).
+
+\paragraph{Version~3 (negative constraint tightening).}
+Same schema as v2 with an added hard constraint: ``Do NOT extract background or logistics unless explicitly used to support a claim, threat, or mobilisation.'' This improved recall and reduced hallucinated narrative logic, but the model still failed to populate the new analytical fields (\texttt{narrative\_function}, \texttt{speaker\_role}, \texttt{causal\_relation\_type}). The output was safer and more faithful but not yet more analytically useful than v1.
+
+\paragraph{Version~4 (production).}
+Three structural changes resolved the compliance failures:
+
+\begin{enumerate}
+\item \textbf{Schema-first with inline comments.} The JSON template was moved to immediately after the system prompt, with each field explained in context via inline comments. This eliminated the need for the model to cross-reference prose rules with the schema.
+\item \textbf{Worked example with reasoning.} A single complete extraction example from Hungarian political text demonstrated correct population of all fields, including \texttt{narrative\_function}, causal relation typing, and role differentiation. This was the highest-leverage single change.
+\item \textbf{Schema reduction and hard filtering.} \texttt{background} and \texttt{logistics} were removed from the \texttt{narrative\_function} enum entirely rather than being extracted and labelled, forcing the model to produce only narratively pressured elements. Fields that the model could not reliably populate (\texttt{actor\_type}, \texttt{target\_type}, \texttt{normative\_direction}, \texttt{normative\_type}, \texttt{constructed\_audience}, \texttt{attribution}, \texttt{evidence\_span}, \texttt{confidence}) were dropped, reducing the schema from 15 to 7 core fields plus 3 causal subfields.
+\end{enumerate}
+
+% \noindent The resulting prompt is approximately 40\% shorter in word count than v3 despite adding the worked example, because the 11 instruction blocks were compressed into 8 compact rules and redundancy between rules and schema was eliminated. A decision table for \texttt{narrative\_function} assignment provides a compact, scannable reference for the model.
+
+The key design insight is that the progression from v1 to v4 reflects a shift from maximum analytical coverage to extraction reliability: sacrificing fine-grained fields (attribution type, evidence spans, confidence calibration) for better schema compliance and field-level consistency. For downstream narrative clustering, reliable population of seven core fields outweighs noisy population of fifteen.
+
+\subsubsection{Translation-First Variant}
+\label{sec:translation_variant}
+
+We test whether pre-translating Hungarian articles to English before extraction improves quality, hypothesising that GPT-4o's stronger English-language capabilities might yield more reliable frame extraction. Each article is first translated by GPT-4o (\texttt{temperature=0}, prompt: ``Translate\ldots maintaining the original tone, style, and factual content exactly''), then the v4 extraction prompt is applied to the English text. The same 5-article evaluation set and LLM-as-judge rubric are used for comparison (see \S\ref{sec:llm_judge}).
+
+
+\subsubsection{Frame Aggregation and Clustering}
+\label{sec:clustering}
+
+After extraction, narrative elements are exploded into a flat table (one row per element) and grouped by composite key: \texttt{(actor, portrayed\_role, target, portrayed\_target\_role)}. This deterministic frequency-based grouping is both a strength (full reproducibility, no hyperparameter sensitivity) and a limitation (sensitive to entity normalisation quality). The top-$k$ most frequent actor--target--role configurations are retained as narrative clusters ($k=5$ in our experiments). For each cluster, a one-paragraph narrative summary is generated by GPT-4o, receiving the concatenated \texttt{action\_or\_claim} and \texttt{causal\_claim} texts from all elements in the cluster.
+
+We note two limitations of this clustering approach. First, many elements have null targets (e.g., 246 Tisza P\'art elements and 110 Orb\'an Viktor elements lack explicit targets). These represent actor-only narrative elements (claims, evaluations, and policy promises without explicit adversaries) and are excluded from the ranked clustering, representing substantial data loss that warrants further investigation. Second, the top-5 cutoff is not empirically optimised; we use it as a pragmatic choice aligned with the brief target of 4--6 narrative clusters.
+
+\subsubsection{Approach~2: BERTopic-Based Topic Modelling}
+\label{sec:bertopic}
+
+As a comparative baseline, we apply BERTopic \citep{grootendorst2022bertopic} to the same 574-article corpus in five configurations varying input representation and hyperparameters.
+
+\paragraph{Input representations.}
+Three input types are compared: (1)~raw Hungarian article text; (2)~NPF-guided summaries, where each article is first summarised through a GPT-4o prompt that extracts setting, characters (hero/villain/victim), plot type (decline, stalled progress, illusion of control), and moral, producing a coherent Hungarian-language paragraph; and (3)~English-translated raw text.
+
+\paragraph{Embedding and clustering.}
+All configurations use \texttt{paraphrase-multilingual-mpnet-base-v2} for sentence embeddings and GPT-4o for topic label generation. We test both default BERTopic parameters (\texttt{n\_neighbors=15}, \texttt{min\_cluster\_size=10}) and tuned parameters (\texttt{n\_neighbors=5}, \texttt{n\_components=5}, \texttt{min\_cluster\_size=5}) for each input type.
+
+\paragraph{Evaluation metrics.}
+We report silhouette scores for cluster separation and $C_v$ coherence for topic interpretability. We note a technical issue: the standard \texttt{gensim} coherence computation failed because BERTopic's GPT-4o representation model produces sentence-level labels rather than word-level keywords. We implemented a custom function extracting underlying c-TF-IDF keywords to compute $C_v$ coherence correctly. Initial runs with default parameters reported coherence of 0.0, which reflects a computation failure, not a meaningful score; only results from the corrected implementation are reported.
+
+
+%----------------------------------------------------------------------
+\subsection{Evaluation of Narrative Extraction}
+\label{sec:eval_extraction}
+
+\subsubsection{LLM-as-Judge Evaluation}
+\label{sec:llm_judge}
+
+A separate GPT-4o instance evaluates extraction quality on four dimensions using a 1--5 Likert scale:
+
+\begin{enumerate}
+\item \textbf{Grounding}: Do content fields (action descriptions, causal claims) correspond to content present in the source article?
+\item \textbf{Role accuracy}: Do \texttt{portrayed\_role} and \texttt{portrayed\_target\_role} assignments match how the source text constructs the actor?
+\item \textbf{Atomicity}: Does each element contain exactly one distinct claim or action?
+\item \textbf{NPF logic}: Are causal markers correctly identified and \texttt{narrative\_function} labels correctly assigned?
+\end{enumerate}
+
+The judge receives the original article and the extracted JSON and produces structured scores with reasoning. Evaluation is run on 5 randomly sampled articles (\texttt{random\_state=42}), applied to prompt versions~1 and~4 and to the translation-first variant. We acknowledge that $n=5$ is insufficient for statistical claims; we treat this as a pilot evaluation and frame results accordingly.
+
+\paragraph{Limitation.}
+The judge is the same model family (GPT-4o) as the extractor, creating a potential self-evaluation bias. The judge may systematically overlook errors that the extractor systematically makes. For the v4 production prompt, the judge cannot assess \texttt{evidence\_span} grounding (this field was dropped in v4); instead, it assesses whether \texttt{action\_or\_claim} content is traceable to the source text. To mitigate this bias for brief-level evaluation, we employ a multi-model judging protocol using three different LLM families (ChatGPT~4o, Claude Sonnet~4.5, Gemini Pro) as independent judges (\S\ref{sec:exp1_brief}). Expert human evaluation of the final briefs, currently underway with journalists, will provide the authoritative quality assessment.
+
+
+\subsubsection{Results: Prompt Version Comparison}
+\label{sec:results_prompt}
+
+Table~\ref{tab:judge_v4} reports LLM-as-judge scores for the v4 production prompt on the 5-article evaluation set.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{lcccc}
+  \hline
+  \textbf{Article} & \textbf{Ground.} & \textbf{Role} & \textbf{Atom.} & \textbf{NPF} \\
+  \hline
+  4706  & 5 & 4 & 5 & 4 \\
+  264   & 5 & 5 & 4 & 5 \\
+  550   & 5 & 4 & 5 & 4 \\
+  4326  & 5 & 4 & 5 & 5 \\
+  4811  & 5 & 4 & 5 & 4 \\
+  \hline
+  \textbf{Mean} & \textbf{5.0} & \textbf{4.2} & \textbf{4.8} & \textbf{4.4} \\
+  \hline
+\end{tabular}
+\caption{LLM-as-judge scores (1--5) for the v4 production prompt on 5 evaluation articles. Ground.\ = Grounding, Role = Role Accuracy, Atom.\ = Atomicity, NPF = NPF Logic.}
+\label{tab:judge_v4}
+\end{center}
+\end{table}
+
+Grounding is consistently perfect (5/5 on all articles), confirming that the model reliably ties extractions to source text content. Role accuracy is the weakest dimension (mean 4.2), with recurring judge comments noting ambiguity around whether neutral portrayals should be coded as slightly positive or negative---a genuine analytical difficulty in political text. Atomicity (4.8) and NPF logic (4.4) are strong. Versions~1 and~4 show comparable aggregate scores (no degradation), confirming that the schema simplification from v1 to v4 preserved extraction quality while improving parsability and schema compliance.
+
+\paragraph{Qualitative improvements across versions.}
+While aggregate scores are similar, qualitative analysis of extraction outputs reveals important structural differences. Version~1 produced well-grounded but analytically flat extractions: no \texttt{narrative\_function} typing, no causal relation classification, over-representation of background and logistics content. Version~3 improved recall and reduced hallucinated narrative logic but still failed to populate the newly added analytical fields. Version~4 achieved full schema compliance: every element contains all required fields, \texttt{narrative\_function} differentiates between claims, evaluations, threats, and mobilisation elements, and causal relation typing distinguishes threat-based from justification-based and prevention-based causal logic. This structural richness is not captured by the four-dimension judge rubric but is essential for downstream clustering and brief generation.
+
+
+\subsubsection{Results: Translation-First Variant}
+\label{sec:results_translation}
+
+Table~\ref{tab:translation_delta} shows per-article score deltas between direct Hungarian extraction (v4) and the translation-first variant on the same 5-article set.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{lcccc}
+  \hline
+  \textbf{Article} & \textbf{$\Delta$Ground.} & \textbf{$\Delta$Role} & \textbf{$\Delta$Atom.} & \textbf{$\Delta$NPF} \\
+  \hline
+  4706  & 0 & 0  & 0  & 0  \\
+  264   & 0 & 0  & $-1$ & $+1$ \\
+  550   & 0 & 0  & 0  & 0  \\
+  4326  & 0 & $-1$ & 0  & 0  \\
+  4811  & 0 & 0  & 0  & 0  \\
+  \hline
+  \textbf{Mean} & \textbf{0.0} & \textbf{$-$0.2} & \textbf{$-$0.2} & \textbf{$+$0.2} \\
+  \hline
+\end{tabular}
+\caption{Score deltas (translation-first minus direct Hungarian) on 5 evaluation articles. Positive values indicate improvement from translation.}
+\label{tab:translation_delta}
+\end{center}
+\end{table}
+
+Pre-translation produces near-identical quality (all mean deltas $\leq 0.2$ in absolute value), with marginal trade-offs: atomicity degrades slightly on one article while NPF logic improves on another. The differences are within noise for $n=5$.
+
+\paragraph{Conclusion.}
+Pre-translation does not appear to improve extraction quality sufficiently to justify the added cost (doubling LLM calls, and thus both cost and latency) and the risk of translation-introduced distortions in culturally specific political terminology and idioms. An evaluation on a larger sample is planned to confirm this observation, but in the current version, direct Hungarian extraction is adopted as the production configuration.
+
+
+\subsubsection{Results: BERTopic Comparison}
+\label{sec:results_bertopic}
+
+Table~\ref{tab:bertopic} summarises the five BERTopic configurations.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{lccc}
+  \hline
+  \textbf{Configuration} & \textbf{Topics} & \textbf{Silh.} & \textbf{$C_v$} \\
+  \hline
+  Raw, default       & 2   & 0.86 & --- \\
+  Summary, default   & 4   & 0.66 & --- \\
+  Summary, tuned     & ${\sim}38$  & 0.66 & 0.62 \\
+  Raw, tuned          & ${\sim}46$  & 0.71 & 0.60 \\
+  Translated, tuned  & ${\sim}39$  & --- & --- \\
+  \hline
+\end{tabular}
+\caption{BERTopic results across five configurations. Default-parameter runs produced degenerate clusterings (1--2 mega-clusters) and are reported for completeness; coherence for these is omitted as the initial computation failed (see text). Silh.\ = silhouette score; $C_v$ = topic coherence.}
+\label{tab:bertopic}
+\end{center}
+\end{table}
+
+\paragraph{Default parameters fail.}
+With default BERTopic settings, raw text produces only 2 topics (one mega-cluster of 561/574 articles) and NPF summaries produce 4 topics (one mega-cluster of 528/574 articles). These are unusable for narrative intelligence.
+
+\paragraph{Tuned parameters produce granular but event-level clusters.}
+With reduced \texttt{n\_neighbors} and \texttt{min\_cluster\_size}, raw-text BERTopic identifies approximately 46 topics with a silhouette score of 0.71 and $C_v$ coherence of 0.60. However, qualitative inspection reveals that these are predominantly \emph{event clusters} (e.g., ``Knife threat in Budapest arrest,'' ``Balm\'azuj\'aros by-election Fidesz victory'') rather than narrative clusters. The model groups articles by surface-level topical similarity---shared entities, locations, and event types---and not by shared narrative structure.
+
+\paragraph{NPF summaries shift toward narrative-level clustering.}
+BERTopic on NPF-guided summaries (tuned) produces clusters closer to narrative groupings (e.g., ``Crisis of liberal democracy and populism,'' ``Orb\'an Viktor and defence of Hungary''), with a silhouette score of 0.66 and $C_v$ coherence of 0.62. This confirms the ``semantic injection'' hypothesis: rewriting articles through an NPF lens before embedding changes the mathematical distance between documents, bringing together articles that share narrative structure across different topics.
+
+\paragraph{A metric limitation, not a method failure.}
+Notably, the raw-text configuration achieves a \emph{higher} silhouette score (0.71 vs.\ 0.66) than the NPF-summary configuration. This inversion reflects a systematic limitation of standard cluster metrics in this setting: narrative abstraction increases lexical variance within clusters (the same ``sovereignty defence'' narrative may involve hospitals, pensions, and military policy), which penalises cluster tightness. Event-level clusters, by contrast, share surface-level vocabulary (place names, event-specific terms) that produces mathematically tighter but analytically shallower groupings. For narrative intelligence, semantic utility diverges from metric optimality; this should be considered when evaluating any embedding-based narrative clustering approach.
+
+\paragraph{Translated raw text.}
+English-translated BERTopic produces the most granular clustering (${\sim}$39 topics with tuned parameters), including some narrative-adjacent groupings (``Orb\'an--Trump alliance and war policy,'' ``Media independence and rule of law in Hungary''). However, these remain topic-level groupings and exhibit language mixing in labels (Hungarian and English), reflecting leakage from the GPT-4o representation model.
+
+\paragraph{Key finding.}
+The fundamental distinction is between \emph{topics} (what articles are about) and \emph{narratives} (how stories are framed). BERTopic, even with NPF-guided input, recovers topical coherence but not the structural elements that define narratives in the NPF sense: actor--role assignments, causal logic, and implied solutions. The frame-extraction approach (\S\ref{sec:npf_extraction}) provides these structural elements by design, making it the appropriate method for generating narrative intelligence briefs that require character maps, causal claim inventories, and role-based analysis.
+
+
+\subsubsection{Results: Production Clustering}
+\label{sec:results_clustering}
+
+Applying the frequency-based frame clustering (\S\ref{sec:clustering}) to the 4{,}266 extracted elements from the full corpus, the five most frequent actor--target--role configurations are shown in Table~\ref{tab:clusters}. The embedding-based clustering described in \S\ref{sec:stage2_clustering} produces more nuanced groupings for brief generation; we report the frequency-based results here as they provide interpretable insight into the dominant narrative structures.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{clccc}
+  \hline
+  & \textbf{Actor $\rightarrow$ Target} & \textbf{A.\ Role} & \textbf{T.\ Role} & \textbf{$n$} \\
+  \hline
+  1 & Orb\'an V.\ $\rightarrow$ Br\"usszel & hero & villain & 69 \\
+  2 & Trump $\rightarrow$ Orb\'an V. & hero & hero & 45 \\
+  3 & Orb\'an V.\ $\rightarrow$ Tisza P\'art & hero & proxy & 18 \\
+  4 & Orb\'an V.\ $\rightarrow$ Ukrajna & hero & villain & 13 \\
+  5 & Orb\'an V.\ $\rightarrow$ h\'abor\'u & hero & threat & 10 \\
+  \hline
+\end{tabular}
+\caption{Top-5 narrative clusters by frequency. A.\ = actor; T.\ = target. Note: elements with null targets (e.g., 246 for Tisza P\'art, 110 for Orb\'an Viktor) are excluded from this ranking.}
+\label{tab:clusters}
+\end{center}
+\end{table}
+
+The clusters reflect recognisable narrative structures in Hungarian pre-election discourse. Cluster~1 (Orb\'an vs.\ Brussels, $n=69$) captures the sovereignty-defence narrative, with Orb\'an framed as a hero defending Hungary against EU-imposed austerity and war economy pressures. Cluster~2 (Trump--Orb\'an alliance, $n=45$) captures the international legitimation narrative, where both actors are framed as heroes. Cluster~3 uses the \texttt{proxy} target role to capture Orb\'an's framing of the Tisza P\'art as a stand-in for Brussels interests. Clusters~4 and~5 employ the \texttt{villain} and \texttt{threat} target roles to capture anti-war and anti-Ukraine framing. The appearance of \texttt{proxy} and \texttt{threat} roles---introduced in the v4 schema---validates their analytical utility for Hungarian political discourse.
+
+The generated narrative summaries demonstrate that the pipeline can synthesise extracted frames into coherent characterisations. For Cluster~1, the summary reads (excerpt): ``In the narrative constructed by Orb\'an Viktor, he positions himself as a hero defending Hungary against the villainous actions of Brussels. Orb\'an claims that Brussels opposes Hungary's financial policies [\ldots] and pressures Hungary to adopt a war economy to support Ukraine, which he frames as a threat to Hungarian sovereignty and prosperity.'' This illustrates the pipeline successfully recovering NPF structure: hero/villain casting, causal claims, and implied threat framing.
+
+
+%----------------------------------------------------------------------
+\subsection{Prompt Engineering Lessons: Frame Extraction}
+\label{sec:prompt_lessons}
+
+The iterative prompt engineering process yielded several findings relevant to practitioners using LLMs for structured information extraction from political text.
+
+% \paragraph{Schema compliance requires structural, not verbal, enforcement.}
+% Adding fields to a JSON schema and describing them in prose instructions does not ensure the model will populate them. In our experiments (v2, v3), the model ignored newly added fields when they required additional reasoning (e.g., classifying \texttt{narrative\_function}, typing causal relations) while reliably following fields that matched its default extraction behaviour (actor names, surface-level role assignment). Moving the schema to the top of the prompt with inline explanations and providing a single worked example resolved this issue in v4.
+
+\paragraph{Reducing the schema improves output quality.}
+Counter-intuitively, dropping 8 fields between v3 and v4 (including \texttt{attribution}, \texttt{evidence\_span}, and \texttt{confidence}) improved the quality of the remaining fields. This suggests that for complex extraction tasks, LLMs face a quality--breadth trade-off: a smaller, reliably populated schema is more useful for downstream processing than a larger, partially populated one.
+
+\paragraph{Excluding unwanted categories outperforms labelling them.}
+Allowing \texttt{background} and \texttt{logistics} as valid \texttt{narrative\_function} values caused approximately 40\% of extracted elements to be analytically low-signal in early versions. Removing these values from the enum and adding a hard constraint (``do not extract these'') was more effective than instructing the model to extract but down-weight them.
+
+\paragraph{Decision tables outperform prose rules.}
+Compact tabular decision criteria for field assignment (e.g., ``if the element urges action $\rightarrow$ mobilisation; if it attributes cause $\rightarrow$ claim'') produced more reliable classification than equivalent prose instructions, likely because tables reduce the attention cost of cross-referencing rules with field definitions.
+
+\paragraph{Self-evaluation bias is a practical concern.}
+The LLM-as-judge approach provides rapid iteration feedback but may miss systematic errors shared between extractor and evaluator. In our case, role accuracy (4.2/5) was consistently the weakest dimension, yet the judge's reasoning focused on \emph{ambiguous} cases rather than \emph{incorrect} ones---suggesting possible blind spots in detecting subtle misassignment.
+
+
+
+% ======================================================================
+% SECTIONS: Manipulation Detection (Pass B) — Methodology & Evaluation
+% Integrates with narrative extraction sections as companion material
+% ======================================================================
+
+
+%----------------------------------------------------------------------
+\subsection{Manipulation Technique Detection (Pass~B)}
+\label{sec:manipulation_detection}
+
+Parallel to NPF frame extraction (Pass~A), each article undergoes a second extraction pass to identify rhetorical manipulation techniques. This separation is deliberate: narrative structure (who does what to whom, and why) and persuasion mechanics (how the text manipulates the reader) are analytically distinct and serve different downstream functions in the intelligence brief---the former structures the narrative summary and character map, the latter populates the manipulation profile and informs counter-strategy selection.
+
+\paragraph{Taxonomy.}
+We adopt the persuasion technique taxonomy from the SemEval~2023 shared task on propaganda detection \citep{piskorski2023semeval}, extended with two additional categories (\textit{false equivalence} and \textit{appeal to pity}) as used in the SlavicNLP~2025 shared task. The full taxonomy comprises 6 main categories (Attack on Reputation, Justification, Distraction, Simplification, Call, Manipulative Wording) subdivided into \textbf{25 fine-grained technique labels} (Table~\ref{tab:taxonomy_categories}). We retain the complete 25-label set rather than collapsing categories, as downstream brief generation requires technique-level granularity for counter-strategy mapping: different techniques imply different intervention types (e.g., inoculation for simplification techniques, re-humanisation for identity-based attacks).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{p{3.2cm}p{9.5cm}}
+  \hline
+  \textbf{Category} & \textbf{Techniques} \\
+  \hline
+  Attack on Reputation & name\_calling\_labelling, guilt\_by\_association, doubt, appeal\_to\_hypocrisy, questioning\_reputation \\
+  Justification & flag\_waving, appeal\_to\_authority, bandwagon, appeal\_to\_fear, appeal\_to\_values \\
+  Distraction & straw\_man, whataboutism, red\_herring, appeal\_to\_pity \\
+  Simplification & causal\_oversimplification, false\_dilemma, consequential\_oversimplification, false\_equivalence \\
+  Call & slogan, conversation\_killer, appeal\_to\_time \\
+  Manipulative Wording & loaded\_language, obfuscation, exaggeration\_minimisation, repetition \\
+  \hline
+\end{tabular}
+\caption{SemEval/SlavicNLP persuasion technique taxonomy: 6 categories, 25 labels.}
+\label{tab:taxonomy_categories}
+\end{table}
+
+\paragraph{Intent-based regrouping for brief generation.}
+For the manipulation profile section of the intelligence brief, we additionally map the 25 techniques into 6 intent-based categories designed for counter-strategy selection rather than taxonomic completeness: \textit{legitimisation} (appeal to authority, flag-waving, appeal to values, bandwagon), \textit{emotional manipulation} (loaded language, appeal to fear, appeal to pity, exaggeration/minimisation), \textit{identity polarisation} (name-calling, guilt by association, false dilemma), \textit{simplification} (causal and consequential oversimplification), \textit{distraction} (whataboutism, straw man, red herring), and \textit{mobilisation} (slogan, conversation killer, appeal to time). Each technique is further annotated with an emotion mapping (emotions used and emotions provoked), enabling the brief to characterise the emotional architecture of each narrative cluster.
+
+\paragraph{Extraction configuration.}
+Extraction uses GPT-4o with \texttt{temperature=0} and JSON response format enforcement. For each detected technique, the model outputs a technique label from the controlled 25-label vocabulary, a verbatim evidence span from the source text, and a confidence level (high, medium, or low). The model is instructed to extract all technique instances, including multiple labels on the same text span where applicable---a critical requirement given that propaganda texts frequently layer techniques (e.g., a passage may simultaneously exhibit \texttt{loaded\_language} and \texttt{false\_dilemma}).
+
+
+\subsubsection{Prompt Engineering for Manipulation Detection}
+\label{sec:manipulation_prompt}
+
+The detection prompt underwent iterative development evaluated against the SlavicNLP~2025 shared task training data (Subtask~2: span-level multi-label technique classification, \citep{piskorski2025proceedings}), which provides gold-standard annotations for 27 Russian-language political texts using the same SemEval taxonomy. We use this dataset as a development benchmark: since the shared task's test labels are not public, all evaluation uses the training partition only. The evaluation metric is span-level micro~F1 with character-offset IoU $\geq 0.3$ for span matching and exact label match.
+
+\paragraph{Version~1 (zero-shot).}
+The initial prompt used a custom intent-based taxonomy (derived from brainstorming the SemEval labels into operational categories) with no few-shot examples. It instructed the model to extract ``minimal evidence spans'' and included intent categories and emotion mappings per technique. Result: \textbf{micro~F1 = 0.008} (1~TP, 6~FP, 235~FN). The model found a handful of techniques but missed the vast majority. Two compounding failures were identified: (a)~the custom taxonomy labels did not align with gold annotations, and (b)~the ``minimal spans'' instruction produced extractions averaging 152~characters---approximately half the gold-standard average of 319~characters, causing valid detections to fail the IoU threshold.
+
+\paragraph{Version~2 (few-shot with targeted examples).}
+We reverted to the exact SemEval 25-label vocabulary and added 4 few-shot examples targeting the most common error types from v1 (false dilemma, doubt vs.\ exaggeration confusion, flag-waving in critical contexts, conversation killers). We also added disambiguation instructions for the most problematic label pair (\texttt{doubt} vs.\ \texttt{exaggeration\_minimisation}). Result: \textbf{micro~F1 = 0.104} (20~TP, 130~FP, 216~FN). Error analysis revealed five systematic root causes:
+
+\begin{enumerate}
+\item \textbf{Phantom labels.} The model generated labels not in the SemEval taxonomy (\texttt{scapegoating}: 14~FP; \texttt{appeal\_to\_tradition}: 7~FP; \texttt{dehumanisation}: 3~FP), accounting for 24 false positives.
+\item \textbf{Span size mismatch.} Predicted spans remained too short: 17 predictions had the correct label and overlapping span but failed the IoU$\geq$0.3 threshold (estimated F1 at IoU$\geq$0.1 would have yielded 35~TP).
+\item \textbf{Zero recall on 12 categories.} 12 of 25 labels had zero true positives, accounting for 107/236 (45\%) of gold annotations. The 4 few-shot examples covered only 4 labels.
+\item \textbf{Systematic label confusions.} The model confused \texttt{loaded\_language} with \texttt{name\_calling\_labelling} (5 cases), \texttt{appeal\_to\_fear} with \texttt{causal\_oversimplification} (3), and \texttt{appeal\_to\_fear} with \texttt{consequential\_oversimplification} (3).
+\item \textbf{Multi-label blindness.} 51\% of gold annotations (121/236) were on multi-label spans (2--5 techniques on the same character range). The model rarely produced overlapping labels.
+\end{enumerate}
+
+\paragraph{Version~3 (production SlavicNLP prompt).}
+The final evaluated prompt addressed all five root causes through structural changes:
+
+\begin{itemize}
+\item \textbf{12 Language-specific few-shot examples} covering all zero-recall categories, including multi-label examples (e.g., \texttt{causal\_oversimplification} + \texttt{loaded\_language} on the same passage). Examples were sourced from Hungarian political texts in the same domain as the target corpus, with annotations in Hungarian to provide reasoning context.
+\item \textbf{Disambiguation table} embedded in the prompt as a lookup structure (10 rows mapping commonly confused labels to correct alternatives with key distinctions). This directly addresses the label confusion patterns from v2.
+\item \textbf{Explicit multi-label instruction}: ``The SAME passage can have 2--5 techniques simultaneously. Output SEPARATE JSON entries for each technique, even if the evidence span is identical.''
+\item \textbf{Span length guidance}: ``If a technique pervades a paragraph, quote the ENTIRE paragraph'' (replacing the previous ``minimal span'' instruction).
+\item \textbf{Hard vocabulary constraint}: the 25 valid labels listed explicitly, with the statement ``Any other label is INVALID.'' Phantom labels were additionally mapped to valid labels in a post-processing fallback (\texttt{scapegoating} $\to$ \texttt{guilt\_by\_association}, \texttt{appeal\_to\_tradition} $\to$ \texttt{appeal\_to\_values}).
+\end{itemize}
+
+Result on SlavicNLP training data: \textbf{micro~F1 = 0.227} (45~TP, 115~FP, 191~FN); \textbf{macro~F1 = 0.222} (the best performing shared task model for this dataset had the macro~F1 of 0.21 \citep{piskorski2025slavicnlp}, reflecting the task’s complexity).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+  \hline
+  \textbf{Prompt Version} & \textbf{Micro F1} & \textbf{TP / FP / FN} & \textbf{Key Change} \\
+  \hline
+  v1 (zero-shot, custom taxonomy) & 0.008 & 1 / 6 / 235 & --- \\
+  v2 (few-shot, 4 examples) & 0.104 & 20 / 130 / 216 & SemEval labels + examples \\
+  v3 (12 examples + disambig.\ table) & 0.227 & 45 / 115 / 191 & Full coverage + rules \\
+  \hline
+\end{tabular}
+\caption{Prompt iteration results on SlavicNLP~2025 training data (27 Russian texts, IoU $\geq$ 0.3).}
+\label{tab:manipulation_iterations}
+\end{table}
+
+\paragraph{Per-technique performance (v3).}
+Performance varies substantially across technique types (Table~\ref{tab:per_technique}). The strongest results appear for techniques with clear surface cues: \texttt{guilt\_by\_association} (F1=0.500, recall=1.000), \texttt{appeal\_to\_values} (F1=0.400), and \texttt{appeal\_to\_pity} (F1=0.400). Several categories remain at zero recall: \texttt{doubt}, \texttt{obfuscation}, \texttt{questioning\_reputation}, and \texttt{slogan}. This pattern suggests that techniques defined by explicit rhetorical moves (associating with condemned groups, invoking values) are more amenable to LLM detection than those requiring pragmatic inference (casting doubt implicitly, being deliberately vague). The persistent difficulty with \texttt{obfuscation} is particularly notable: the technique is defined as deliberately unclear language, which the model struggles to distinguish from genuinely complex argumentation.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+  \hline
+  \textbf{Technique} & \textbf{Prec.} & \textbf{Rec.} & \textbf{F1} & \textbf{Support} \\
+  \hline
+  guilt\_by\_association & 0.333 & 1.000 & 0.500 & 3 \\
+  appeal\_to\_values & 0.357 & 0.455 & 0.400 & 22 \\
+  appeal\_to\_pity & 1.000 & 0.250 & 0.400 & 4 \\
+  bandwagon & 0.500 & 0.333 & 0.400 & 3 \\
+  appeal\_to\_hypocrisy & 0.500 & 0.250 & 0.333 & 8 \\
+  consequential\_oversimp. & 0.429 & 0.273 & 0.333 & 11 \\
+  name\_calling\_labelling & 0.263 & 0.333 & 0.294 & 15 \\
+  red\_herring & 0.333 & 0.250 & 0.286 & 4 \\
+  whataboutism & 0.500 & 0.200 & 0.286 & 5 \\
+  \hline
+  \multicolumn{5}{l}{\textit{Selected zero-recall categories:}} \\
+  doubt & 0.000 & 0.000 & 0.000 & 8 \\
+  obfuscation & 0.000 & 0.000 & 0.000 & 13 \\
+  slogan & 0.000 & 0.000 & 0.000 & 6 \\
+  questioning\_reputation & 0.000 & 0.000 & 0.000 & 5 \\
+  \hline
+\end{tabular}
+\caption{Per-technique results for v3 prompt on SlavicNLP training data (selected rows; full results in Appendix). Support = gold instances.}
+\label{tab:per_technique}
+\end{table}
+
+
+\subsubsection{Adaptation for Hungarian Production}
+\label{sec:manipulation_hungarian}
+
+The final production prompt (deployed on the 574-article Hungarian corpus) adapts the v3 SlavicNLP prompt with three modifications:
+
+\begin{enumerate}
+\item \textbf{Examples translated to Hungarian.} All 12 few-shot examples were rewritten using Hungarian political text from the target domain. The examples and annotations are provided in Hungarian with analytical labels in English, mirroring the bilingual configuration used for NPF extraction. For instance, the \texttt{causal\_oversimplification} + \texttt{loaded\_language} example uses a passage from Hungarian coverage of US--Ukraine geopolitics rather than the original Russian source.
+\item \textbf{Competition-specific constraints removed.} The SlavicNLP prompt included span-length targets (``200--400 characters''), coverage hints (``6--12 instances per article''), and IoU-calibrated instructions that overfit to the shared task evaluation protocol. These were removed for generalisation; the production prompt retains only ``if a technique pervades a paragraph, quote the entire paragraph.''
+\item \textbf{Taxonomy references generalised.} References to ``Russian political texts'' and ``SlavicNLP/SemEval taxonomy'' were replaced with ``political texts'' and ``predefined persuasion technique taxonomy'' to avoid priming the model toward Russian-specific rhetorical patterns.
+\end{enumerate}
+
+The production prompt retains the core architectural elements that drove the v2$\to$v3 improvement: the 25-label hard vocabulary constraint, the 10-row disambiguation table, the multi-label extraction instruction, and the 12 few-shot examples. A post-processing \texttt{normalize\_label} function maps any residual non-standard labels to valid taxonomy entries or rejects them.
+
+% \paragraph{Span alignment.}
+% Since the model returns verbatim text quotes rather than character offsets, we implement a \texttt{RegexAligner} that locates each quoted span in the source document. The aligner converts spaces in the quoted text to a flexible whitespace regex pattern (matching newlines, tabs, and multiple spaces), then performs regex search on the original text to recover exact character offsets. A fallback to simple substring search handles cases where regex escaping fails. This alignment is necessary for evaluation against gold annotations but also serves production purposes: character-level spans enable downstream overlay visualisation of manipulation techniques on source text.
+
+
+%----------------------------------------------------------------------
+\subsection{Prompt Engineering Lessons: Manipulation Detection}
+\label{sec:manipulation_prompt_lessons}
+
+The manipulation detection prompt engineering process reveals complementary lessons to those from NPF frame extraction (\S\ref{sec:prompt_lessons}), arising from the different nature of the task: multi-label classification with a large label set and span-level evaluation, rather than structured information extraction.
+
+\paragraph{Phantom labels require hard vocabulary constraints, not just instructions.}
+The model's tendency to generate plausible but out-of-taxonomy labels (\texttt{scapegoating}, \texttt{dehumanisation}, \texttt{appeal\_to\_tradition}) persisted across prompt versions despite explicit instructions to use only the 25 listed labels. These phantom labels are semantically close to valid labels and represent the model's own conceptual categories for propaganda. Effective mitigation required both in-prompt constraints (an explicit ``INVALID'' declaration) and post-processing normalisation. This suggests that for classification tasks with closed label sets, LLMs need both generative and post-hoc enforcement.
+
+\paragraph{Disambiguation tables address systematic confusion patterns.}
+The 10-row disambiguation table (mapping common confusions like \texttt{appeal\_to\_fear} vs.\ \texttt{causal\_oversimplification}, or \texttt{loaded\_language} vs.\ \texttt{name\_calling\_labelling}) follows the same principle as the decision tables for NPF extraction: compact, scannable lookup structures outperform equivalent prose rules. The table format is particularly effective for manipulation detection because the 25-label taxonomy contains several near-synonym pairs whose distinctions rest on subtle definitional differences (e.g., \texttt{doubt} = questioning credibility vs.\ \texttt{obfuscation} = deliberately unclear reasoning).
+
+\paragraph{Few-shot examples must cover the label space, not just the task type.}
+The jump from v2 (4 examples, F1=0.104) to v3 (12 examples, F1=0.227) was driven primarily by expanding coverage: v2's examples covered 4 of 25 labels, leaving 12 categories at zero recall. This mirrors the NPF finding that worked examples are the highest-leverage prompt element, but adds a dimensionality constraint: for multi-label classification with $k$ labels, examples must sample broadly across the label space.
+
+\paragraph{Span calibration is evaluation-specific but reveals a real tension.}
+The ``minimal span'' vs.\ ``full passage'' instruction shift accounts for a substantial portion of the F1 improvement (an estimated 17 additional true positives recovered by the span change alone). This reflects a genuine tension: analysts prefer concise, precisely targeted evidence spans, but IoU-based evaluation rewards overlap with annotator-marked passages that often include surrounding context. For production deployment without IoU evaluation, we recommend the shorter-span instruction with post-hoc context expansion for presentation.
+
+\paragraph{Cross-linguistic transfer is non-trivial.}
+The SlavicNLP benchmark uses Russian texts; the production deployment uses Hungarian. Although the taxonomy definitions are language-independent and GPT-4o handles both languages, the rhetorical conventions differ: Hungarian political discourse relies heavily on historical allusion and sovereignty framing that may not match the stereotypical manifestations in the few-shot examples. We did not conduct a formal cross-linguistic evaluation; the production Hungarian prompt's accuracy relative to the SlavicNLP benchmark remains an open question.
+
+\subsection{Stage 2: Narrative Cluster Construction}
+\label{sec:stage2_clustering}
+
+The production clustering replaces the earlier frequency-based actor--target grouping (\S\ref{sec:clustering}) with embedding-based semantic clustering of complete narrative frames. This shift addresses the key limitation of deterministic frequency grouping: its sensitivity to entity normalisation and its exclusion of elements with null targets.
+
+\paragraph{Clustering strategies.}
+We compare three strategies, all using \texttt{paraphrase-multilingual-mpnet-base-v2} for sentence embeddings, UMAP for dimensionality reduction (\texttt{n\_neighbors=15}, \texttt{n\_components=5}, cosine metric), and HDBSCAN for density-based clustering (\texttt{min\_cluster\_size=15}, \texttt{min\_samples=5}).
+
+\begin{enumerate}
+\item \textbf{Holistic frame clustering.} Each narrative frame is serialised into a single text combining actor, role, action, target, target role, causal claim, and narrative function. The resulting texts are embedded and clustered directly. This strategy preserves the full NPF structure of each frame.
+
+\item \textbf{Component-based clustering.} Four NPF dimensions---holistic frame, character constellation, moral valence, and plot structure---are clustered independently, enabling cross-dimensional pattern detection (e.g., the same moral frame appearing across different character configurations).
+
+\item \textbf{Hybrid clustering.} Holistic frame clustering is performed first, then clusters are enriched with component-level sub-analysis, combining the coherence of holistic grouping with the analytical depth of component decomposition.
+\end{enumerate}
+
+\paragraph{Cluster labelling and contested characterisation.}
+Each cluster receives an automatic label derived from the modal actor, target, and role values within the cluster. The labelling algorithm detects \emph{contested characterisation}: when the same entity appears as both actor and target within a cluster, or when an actor is assigned multiple roles (e.g., hero by pro-government sources, villain by opposition sources), the cluster is marked as ``contested'' rather than forcing a single role assignment.
+
+\paragraph{Domain classification.}
+Each cluster is mapped to a thematic domain (EU relations, migration, economy/welfare, security/defence, media/judiciary, corruption/rule-of-law, or identity/values) using keyword matching against a curated dictionary of domain-specific actors and terms. This classification determines which contextual card is loaded for brief generation (\S\ref{sec:counterstrategy}).
+
+\paragraph{Strategy selection.}
+We adopt the hybrid strategy for production brief generation, as it produces clusters that are both semantically coherent (suitable for single-brief summarisation) and analytically rich (supporting character maps and manipulation profiles across the NPF dimensions).
+
+\subsection{Stage 3: Narrative Intelligence Brief Generation}
+\label{sec:briefs}
+
+For each narrative cluster, we generate a Narrative Intelligence Brief following a fixed schema. The generation pipeline comprises four sub-steps: coherence filtering, data aggregation, emotion-informed prompt construction, and constrained LLM generation with automated validation.
+
+\paragraph{Coherence filtering.}
+Before aggregation, articles assigned to a cluster are filtered by semantic coherence with the cluster centroid. Each article's narrative frames are serialised into a text representation, embedded using the same sentence-transformer model used for clustering, and compared against the cluster centroid via cosine similarity. Articles below a threshold of 0.35 are dropped. This step removes articles that were borderline cluster assignments and would introduce noise into the brief. If all articles are filtered out, the threshold is relaxed as a fallback.
+
+\paragraph{Data aggregation.}
+For each cluster, the pipeline aggregates: (a)~up to 15 diverse representative narrative frames (sampled to maximise actor and source variety), (b)~manipulation techniques with per-technique frequency counts, evidence spans, and emotion profiles, (c)~up to 5 representative article excerpts, and (d)~source classification metadata (pro-government, independent, opposition). Manipulation techniques are enriched with emotion mappings from a curated lookup table that maps each of the 25 SemEval techniques to the emotions it leverages, the emotions it provokes, and its cognitive effect (e.g., \texttt{appeal\_to\_fear} $\rightarrow$ leverages anxiety $\rightarrow$ provokes compliance $\rightarrow$ tunnel vision).
+
+\paragraph{Master narrative classification.}
+The aggregated manipulation techniques are classified into one of five ``emotional master narratives,'' adapted from strategic communication research: \textit{siege/existential threat}, \textit{betrayal/corruption}, \textit{victimhood/injustice}, \textit{restoration/nostalgia}, and \textit{chaos/decline}. Classification uses a weighted scoring function over the detected technique--emotion pairs, with confidence thresholds. Each master narrative maps to recommended counter-archetypes (e.g., siege narratives $\rightarrow$ ``bridge-building'' and ``shared-security'' counter-frames), which are injected into the prompt to constrain counter-strategy generation.
+
+\paragraph{Generation.}
+Brief generation uses Claude Sonnet (\texttt{claude-sonnet-4-5-20250929})\footnote{NPF frame extraction and manipulation detection use GPT-4o; brief generation uses Claude Sonnet. This two-model configuration reflects the development timeline: extraction prompts were developed and evaluated on GPT-4o via OpenRouter, while the more complex brief generation task was assigned to Claude for its longer context window and instruction-following on structured JSON output.} with \texttt{temperature=0.3} and \texttt{max\_tokens=8000}. The system prompt defines the analyst role, six de-escalation principles, evaluative language boundaries per brief section (strictly neutral for Section~A, analytical for B--C, risk-assessment for D, prescriptive-but-constrained for E), and critical constraints: ground all claims in provided data, use only the contextual card for external facts, and distinguish description from inference. The user prompt injects cluster metadata, narrative frames, manipulation techniques, article excerpts, the contextual card, and the emotion analysis as structured JSON, followed by the complete output schema. The prompt enforces conciseness to avoid output truncation.
+
+Table~\ref{tab:brief_schema} summarises the brief structure.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabularx}{\columnwidth}{|l|X|}
+  \hline
+  \textbf{Section} & \textbf{Content and constraints} \\
+  \hline
+  A.~Narrative Summary & 3--4 concise bullet points referencing specific actors, claims, and causal logic. Strictly neutral language. \\
+  \hline
+  B.~Character Map & Hero/villain/victim/contested assignments with quoted Hungarian-language evidence and source attribution. No inferred roles. \\
+  \hline
+  C.~Manipulation Profile & Top techniques from Pass~B aggregated across cluster; master narrative classification; emotional levers and interaction patterns. Must use taxonomy labels with evidence spans. \\
+  \hline
+  D.~Escalation Assessment & Monitor / Contextual Concern / High-Risk, with specific escalation signals (dehumanisation, exclusion rhetoric, calls to action) and trajectory assessment. Explicitly not ``policy violation.'' \\
+  \hline
+  E.~Counter-Strategy & Structured response recommendations (see \S\ref{sec:counterstrategy}). \\
+  \hline
+\end{tabularx}
+\caption{Narrative Intelligence Brief schema. Each section has explicit generation constraints to reduce hallucination and over-inference.}
+\label{tab:brief_schema}
+\end{center}
+\end{table}
+
+\paragraph{Automated validation.}
+Each generated brief undergoes six automated validation checks before human review: (1)~actor reference check: every summary bullet must reference at least one actor from the input frames; (2)~technique hallucination check: all techniques in the manipulation profile must appear in the input data; (3)~master narrative consistency: the classified master narrative must match the emotion analysis; (4)~URL provenance check: all URLs in counter-strategies must originate from the contextual card; (5)~source provenance: character map source citations must match articles in the cluster; and (6)~statistic traceability: numeric claims in counter-strategies must be traceable to the contextual card. Briefs failing any check are flagged for mandatory human review. If JSON parsing fails, the model is re-prompted with the error message for self-correction (up to 2~retries).
+
+
+\subsection{Counter-Strategy Generation: Frameworks and Constraints}
+\label{sec:counterstrategy}
+
+The counter-strategy section is the most novel and most risky component of the brief. To prevent the LLM from producing generic or unsupported advice, we constrain generation along three axes: (a) a structured response typology drawn from counter-propaganda research; (b) contextual cards providing verified country-specific information; and (c) de-escalation principles embedded in the system prompt.
+
+\paragraph{Response typology.}
+Drawing on the RAN distinction between counter-narratives and alternative narratives \citep{ran2022alternative, briggs2015western} and the GAMMMA+ framework \citep{silverman2016impact}, we require the LLM to generate up to three response options per narrative cluster, each labelled by type:
+
+\begin{itemize}
+\item \textbf{Counter-narrative} (direct rebuttal): truth-first correction of the core false claim, with a cited verifiable source. Follows inoculation principles: name the manipulation technique, then provide the correction \citep{vanderlinden2017inoculating}.
+\item \textbf{Alternative narrative} (positive reframing): a response that addresses the underlying grievance or emotional need the narrative exploits, without repeating the false claim. Must introduce ``something novel'' rather than generic values \citep{ran2022alternative}.
+\item \textbf{Non-engagement recommendation}: when the narrative is likely to be amplified by any response, or when direct engagement risks reactance, the brief recommends non-engagement with justification \citep{resist2019}.
+\end{itemize}
+
+\noindent For each response option, the brief must specify: the recommended \textit{messenger type} (e.g., community leader, subject-matter expert, peer voice---not government official, following research showing that peer credibility outperforms institutional authority \citep{speckhard2018breaking, braddock2020countering}); the \textit{moral frame} aligned with the target audience's values rather than the communicator's \citep{feinberg2015moral}; a concrete \textit{anti-thesis formulation} (a model rebuttal sentence or dialogue opening); the \textit{backfire risk} (low/medium/high with justification); and a \textit{confidence level}.
+
+\paragraph{Contextual cards.}
+For each narrative cluster's thematic domain (e.g., EU relations, economy, security/defence), the pipeline loads a domain-specific contextual card containing: verified statistics with source URLs (e.g., Eurostat migration data, KSH Hungarian labour market data); media ecosystem notes indicating which outlets can credibly carry a counter-frame, based on RSF Media Ownership Monitor and NMHH data; and historical memory triggers relevant to the narrative. Domain assignment is automatic (see \S\ref{sec:stage2_clustering}), with fallback to a general EU-relations card when the domain classifier has low confidence. In the current implementation, contextual cards were initially generated by an LLM and then reviewed by a researcher for factual accuracy---a pragmatic compromise that preserves the architectural constraint (the LLM generating the brief cannot access its own parametric knowledge for facts) while acknowledging that full expert curation would be required for deployment. This directly addresses the well-documented risk that LLMs hallucinate statistics or fabricate sources when generating policy-relevant content \citep{mckenna2023sources}.
+
+\paragraph{De-escalation principles.}
+The system prompt includes evidence-based principles drawn from inoculation research \citep{vanderlinden2017inoculating} and WHO risk communication guidance \citep{who_risk_communication}: (1)~acknowledge emotion before introducing facts; (2)~name the manipulation technique, not the belief; (3)~lower certainty rather than flip belief; (4)~avoid repetition of the false claim, using truth-first framing; (5)~offer agency without mobilisation; (6)~know when non-engagement is the safest response. These principles are injected as explicit constraints in the generation prompt, not as suggestions.
+
+
+\subsection{Pipeline Formalisation}
+\label{sec:formalisation}
+
+We frame the pipeline as a decomposed function rather than end-to-end generation: narrative extraction $= f_{\text{GPT-4o}}(\text{articles}) \rightarrow$ frames + techniques; clustering $= g(\text{frames}, \text{embeddings}) \rightarrow$ narrative clusters; brief generation $= h_{\text{Claude}}(\text{cluster}, \text{contextual card}, \text{emotion analysis}, \text{de-escalation principles}) \rightarrow$ structured brief. Context consists of fixed external variables (statistics, media structure, historical memory), curated by the analyst, not inferred by the generating LLM. This decomposition makes each stage independently auditable and allows selective human intervention at each point. Crucially, the brief-generating model receives only the extraction outputs and analyst-curated context---it has no access to the raw articles, which prevents it from selectively quoting out of context.
+
+
+%----------------------------------------------------------------------
+\section{Evaluation Design}
+\label{sec:evaluation}
+
+We evaluate at three levels: extraction quality (per-article, reported in \S\ref{sec:eval_extraction}), brief quality (per-section, this section), and failure mode analysis (cross-cutting). This is not a benchmark paper: we do not report F1 scores on propaganda detection or claim extraction in isolation. Our primary evaluation signals are section-level quality ratings, failure mode frequency, and qualitative analysis of the most informative failures.
+
+\subsection{Experiment 1: LLM-as-Judge Brief Evaluation}
+\label{sec:exp1_brief}
+
+To evaluate the generated briefs pending expert human review, we employ a multi-model LLM-as-judge protocol. Each brief is evaluated by three LLM judges---ChatGPT~4o, Claude Sonnet~4.5, and Gemini Pro---each prompted with a journalist role and the same structured rubric. The generation model (Claude Sonnet) is deliberately included as one judge alongside two competitors, allowing us to assess self-evaluation bias by comparing its ratings to the other judges. Each judge independently rates sections A--D as Accept/Edit/Reject, evaluates counter-strategies (Section~E) on five sub-dimensions, and identifies failure modes from the taxonomy in Table~\ref{tab:failures}.
+
+\paragraph{Results: Brief C-001.}
+Table~\ref{tab:judge_brief} reports section-level ratings for the first evaluated brief (C-001: Tisza P\'art program launch narrative, 4~articles from 4~sources, analysis period 2026-02-07 to 2026-02-08).
+
+\begin{table}[!ht]
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+  \hline
+  \textbf{Section} & \textbf{ChatGPT-4} & \textbf{Claude S.} & \textbf{Gemini} & \textbf{Consensus} \\
+  \hline
+  A. Narrative Summary    & Edit   & Accept & Edit   & Edit \\
+  B. Character Map        & Edit   & Edit   & Accept & Edit \\
+  C. Manipulation Profile & Accept & Accept & Accept & Accept \\
+  D. Escalation Assessment & Accept & Accept & Accept & Accept \\
+  E. Counter-Strategy     & Edit   & Edit   & Accept & Edit \\
+  \hline
+\end{tabular}
+\caption{Multi-model LLM-as-judge ratings for Brief C-001. Consensus = majority vote. Claude S.\ = Claude Sonnet (also the generating model). No section received a Reject rating from any judge.}
+\label{tab:judge_brief}
+\end{center}
+\end{table}
+
+Three patterns emerge. First, no section was rejected by any judge, indicating that the brief is structurally sound and free of critical errors (hallucinated events, unsafe recommendations). Second, the analytical sections (C: Manipulation Profile, D: Escalation Assessment) achieved unanimous Accept, while the more interpretive sections (A: Narrative Summary, B: Character Map, E: Counter-Strategy) received mixed ratings---suggesting that the pipeline is more reliable at structured analytical tasks than at nuanced framing judgments. Third, the generating model (Claude Sonnet) was \emph{not} systematically more lenient than its competitors: it rated Section~A as Accept where the other two judges flagged it for editing, but rated Section~E as Edit where Gemini accepted it. This asymmetry suggests that self-evaluation bias, while present, does not dominate when judges are given explicit rubrics.
+
+\paragraph{Counter-strategy sub-dimensions.}
+Table~\ref{tab:counter_strategy_checks} reports the five counter-strategy quality checks across judges.
+
+\begin{table}[!ht]
+\begin{center}
+\small
+\begin{tabular}{lccc}
+  \hline
+  \textbf{Dimension} & \textbf{ChatGPT-4} & \textbf{Claude S.} & \textbf{Gemini} \\
+  \hline
+  Response typology    & Yes       & Yes       & Yes \\
+  Messenger realism    & Partial   & Partial   & Yes \\
+  Moral frame alignment & Yes      & Yes       & Yes \\
+  Source veracity       & Yes       & Partial   & Yes \\
+  Backfire risk assess. & Yes       & Partial   & Yes \\
+  \hline
+\end{tabular}
+\caption{Counter-strategy quality checks for Brief C-001. Yes = fully adequate; Partial = adequate with caveats.}
+\label{tab:counter_strategy_checks}
+\end{center}
+\end{table}
+
+Response typology and moral frame alignment pass unanimously: the counter-narratives genuinely rebut claims (e.g., public procurement reform requires multi-factor solutions, not just transparency) and alternative narratives address underlying grievances without repeating the accusation. Messenger realism is the weakest dimension: two judges note that ``non-partisan legal experts'' and ``business leaders with reform credentials'' are increasingly rare in Hungary's polarised environment. Claude Sonnet provides the most critical assessment of source veracity, noting that using Transparency International data faces credibility challenges with pro-government audiences who dismiss international NGOs as ``foreign interference''---a culturally specific concern that the brief's backfire risk assessment acknowledges but, per the judge, understates.
+
+\paragraph{Failure modes detected.}
+The three judges collectively identified four failure mode categories: \textit{role assignment error} (2/3 judges: character map labels too assertive for contested characterisations), \textit{messenger mismatch} (2/3: recommended messengers difficult to operationalise), \textit{moral frame projection} (2/3: some counter-strategies implicitly assume liberal/institutional values), and \textit{source hallucination} (1/3: one counter-strategy uses a claim from the analysed narrative itself as a ``verified fact'' rather than independent data). Notably, \textit{omission} was flagged by Gemini but not by the other judges, suggesting different sensitivity thresholds for completeness. No judge identified \textit{hallucinated actors}, \textit{overconfident intent attribution}, \textit{unsafe counter-strategies}, or \textit{framing leak}---the highest-risk failure modes in the taxonomy.
+
+\paragraph{Qualitative convergence.}
+Despite rating differences, the judges converge on two substantive critiques. First, all three note that the brief does not sufficiently specify the \emph{intended audience} for counter-strategies---whether civil society, opposition parties, or journalists---making actionability ambiguous. Second, two judges observe that the brief assumes a degree of institutional trust and messenger availability that may be overly optimistic given Hungary's polarised media ecosystem. Both critiques point to a systematic limitation: the pipeline's counter-strategy generation is grounded in established frameworks (GAMMMA+, inoculation theory) that assume a functioning public sphere, which may not fully hold in captured-media environments.
+
+% Additional briefs to be evaluated and results aggregated for camera-ready version.
+
+
+\subsection{Experiment 2: Expert Human Evaluation}
+\label{sec:exp2}
+
+The LLM-as-judge protocol provides rapid and structured feedback but cannot assess cultural appropriateness, real-world implementability, or subtle framing errors with the authority of domain experts. We are currently conducting expert human evaluation with a journalist familiar with the Hungarian media landscape, using the same rubric as the LLM judges (Accept/Edit/Reject per section, plus free-text justification and counter-strategy actionability). The same Brief C-001 evaluated by LLM judges in \S\ref{sec:exp1_brief} has been sent for human review; results are pending and will be reported in the camera-ready version. Comparison of human and LLM ratings on the same brief will provide a direct assessment of LLM-as-judge reliability for this task.
+
+\todo{Human reviewer results pending. Will report: (a) section-level agreement between human and LLM judges, (b) failure modes identified by human but missed by LLMs, (c) time-to-review as analyst labour proxy.}
+
+\paragraph{Counter-strategy-specific evaluation.}
+For Section~E specifically, we evaluate along five additional dimensions drawn from counter-propaganda best practice: (1)~response typology correctness---does the counter-narrative actually rebut the core claim, does the alternative narrative address the underlying grievance without repeating the false claim? (2)~messenger type realism for the Hungarian media ecosystem; (3)~moral frame alignment with the target audience's values; (4)~source verifiability---are cited sources real, accessible, and relevant? (5)~backfire risk plausibility.
+
+
+\subsection{Experiment 3: Failure Mode Taxonomy}
+\label{sec:exp3}
+
+For every Edit rating and validation error, we categorise failures using the taxonomy in Table~\ref{tab:failures}. Preliminary empirical findings from Brief C-001 confirm that the most frequent failure modes are \textit{messenger mismatch} (recommended messengers difficult to operationalise in polarised environments), \textit{role assignment error} (character labels too assertive for contested characterisations), and \textit{moral frame projection} (counter-strategies implicitly assuming institutional trust). Critically, the highest-risk failure modes---hallucinated actors, unsafe counter-strategies, and framing leak---were \emph{not} observed, suggesting that the pipeline's grounding constraints and de-escalation principles are effective at preventing the most dangerous errors. The automated validation pipeline correctly flagged two summary bullets for insufficient actor anchoring, both confirmed as valid concerns by the LLM judges.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{tabularx}{\columnwidth}{|l|X|}
+  \hline
+  \textbf{Failure mode} & \textbf{Description} \\
+  \hline
+  Hallucinated actor/event & Entity or event not present in source text \\
+  \hline
+  Role assignment error & Incorrect hero/villain/victim mapping \\
+  \hline
+  Overconfident intent & Attributing strategic intent without textual evidence \\
+  \hline
+  Cultural flattening & Ignoring Hungarian-specific context; applying generic framing \\
+  \hline
+  Manipulation over-detection & Flagging standard political rhetoric as manipulation \\
+  \hline
+  Generic counter-strategy & Advice too vague to act on (e.g., ``promote media literacy'' without specifics) \\
+  \hline
+  Unsafe counter-strategy & Advice that could trigger reactance, amplify the false claim, or harm \\
+  \hline
+  Messenger mismatch & Recommending an institutional messenger where peer voice is needed, or vice versa \\
+  \hline
+  Moral frame projection & Counter-strategy uses the communicator's moral values rather than the audience's \\
+  \hline
+  Framing leak & Brief adopts the narrative's biased framing rather than describing it analytically \\
+  \hline
+  Source hallucination & Counter-strategy cites a fabricated URL, statistic, or institutional source \\
+  \hline
+  Omission & Missing a significant narrative element present in the data \\
+  \hline
+\end{tabularx}
+\caption{Failure mode taxonomy for LLM-generated narrative intelligence briefs. The final six failure modes are specific to the counter-strategy section. Empirical frequencies will be reported with evaluation results.}
+\label{tab:failures}
+\end{center}
+\end{table}
+
+
+\subsection{Metrics}
+\label{sec:metrics}
+
+Our primary evaluation signals are: LLM-as-judge section-level quality ratings (Experiment~1), expert acceptance rate per brief section (Experiment~2), automated validation error frequency, failure mode distribution (Experiment~3), and qualitative analysis of the most informative failures. For counter-strategy sections, we additionally report the sub-dimensions from \S\ref{sec:exp2} as a quality profile. For extraction quality, we report the four-dimension LLM-as-judge rubric (\S\ref{sec:llm_judge}) and per-technique F1 on the SlavicNLP benchmark for manipulation detection.
+
+
+%----------------------------------------------------------------------
+\section{Limitations}
+\label{sec:limitations}
+
+Our corpus spans a broad collection window (April~2024 to February~2026) but the election-relevant subset of 574~articles represents a snapshot; some narratives may require longer observation windows to surface, and narrative dynamics closer to election day (April~2026) are not captured. The pipeline uses two LLM families (GPT-4o for extraction, Claude Sonnet for brief generation) with no systematic model comparison; results are model-specific and may not generalise. No ground-truth narrative annotations exist for this corpus; clustering relies on embedding similarity and analyst judgment, and a different analyst might construct different clusters. Counter-strategy sections are evaluated for perceived usefulness, not real-world efficacy; no field testing with actual target audiences is conducted. Hungarian-language extraction is not validated against human annotation at the frame level; we evaluate only at the brief level via expert review. Generalisability to other countries, elections, or platforms is not tested. Our sources are limited to RSS news feeds, excluding social media where narrative dynamics and manipulation techniques may differ substantially. The contextual cards used for counter-strategy generation were LLM-generated and researcher-reviewed rather than fully expert-curated, which may introduce inaccuracies in the verified information used to constrain strategic advice. Expert human evaluation was not completed by submission time; we report LLM-as-judge results as a proxy and plan to include full human evaluation results in the camera-ready version. Finally, the response typology (counter-narrative / alternative narrative / non-engagement) is a simplification of the full GAMMMA+ framework; we do not implement audience segmentation or channel strategy.
+
+% Additional limitations to consider for camera-ready:
+% (1) The embedding-based clustering has hyperparameter sensitivity (min_cluster_size, coherence threshold) that we do not systematically ablate.
+% (2) The technique-to-emotion mapping is a curated lookup table, not empirically validated.
+% (3) Master narrative classification thresholds are not calibrated against human judgment.
+
+
+%----------------------------------------------------------------------
+\section{Ethical Considerations}
+\label{sec:ethics}
+
+We explicitly scope our work as analyst support, not automated decision-making. The pipeline produces drafts requiring human review; no moderation, content removal, or audience targeting decisions are made. We do not perform voter profiling, demographic inference, or persuasion optimisation. Counter-strategies are framed as de-escalation rather than persuasion, and all strategic advice sections carry explicit confidence levels and backfire risk assessments. Following counter-propaganda best practice \citep{resist2019, ran2022alternative}, we design counter-strategies to avoid amplifying the very narratives they address: the response typology includes explicit non-engagement recommendations, and the de-escalation principles prohibit repetition of false claims. We acknowledge that LLM-generated briefs can contain hallucinations and biases, and we document these as central findings rather than treating them as edge cases.
+
+
+%----------------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented a pipeline for generating structured narrative intelligence briefs from Hungarian pre-election news, combining NPF-grounded frame extraction, SemEval-taxonomy manipulation detection, embedding-based narrative clustering, and constrained counter-strategy generation. The pipeline demonstrates that LLMs, when constrained by explicit analytical schemas, curated external knowledge, and evidence-based de-escalation principles, can produce briefs that are structurally complete and largely grounded in source material.
+
+The extraction stages show strong performance: grounding scores of 5.0/5.0 and NPF logic of 4.4/5.0 on the LLM-as-judge evaluation, with the v4 production prompt achieving full schema compliance after four iterations of prompt engineering. Manipulation detection reaches micro~F1 of 0.227 on the SlavicNLP benchmark---modest in absolute terms, but sufficient for downstream narrative profiling where technique-level precision matters less than profile-level patterns. The iterative prompt engineering process itself constitutes a methodological contribution, yielding generalisable principles: schema-first design with worked examples, hard vocabulary constraints over soft instructions, and decision tables over prose rules.
+
+Brief-level evaluation using three independent LLM judges reveals a clear quality gradient across sections: analytical components (manipulation profile, escalation assessment) achieve unanimous Accept ratings, while interpretive components (narrative summary, character map, counter-strategy) require editing. No section was Rejected by any judge, and the highest-risk failure modes (hallucinated actors, unsafe recommendations, framing leak) were absent---suggesting that the pipeline's grounding constraints effectively prevent the most dangerous errors. The most persistent weaknesses are in counter-strategy implementability: messenger recommendations assume institutional trust and non-partisan expert availability that may not hold in captured-media environments.
+
+From a practitioner perspective, the pipeline's primary value lies in time savings and cognitive load reduction. Converting 574~articles into structured briefs compresses approximately 15~hours of reading into a reviewable format, freeing analyst time for judgment tasks that LLMs cannot reliably perform: assessing cultural appropriateness, evaluating backfire risks, and making deployment decisions.
+
+Future work should address model comparison (testing whether different LLMs produce systematically different failure modes), longitudinal tracking (monitoring narrative evolution across the full pre-election period), multi-platform extension (incorporating social media where narrative dynamics differ), and field testing of counter-strategies with target populations. A key open question raised by the evaluation is whether counter-propaganda frameworks developed for relatively open media environments require adaptation for captured-media contexts where institutional trust and messenger availability are structurally constrained.
+
+
+
+
+\section{Bibliographical References}\label{sec:reference}
+
+\bibliographystyle{lrec2026-natbib}
+\bibliography{my}
+
+\section{Language Resource References}
+\label{lr:ref}
+\bibliographystylelanguageresource{lrec2026-natbib}
+\bibliographylanguageresource{languageresource}
+
+%----------------------------------------------------------------------
+\appendix
+\section{Appendix}
+\label{sec:appendix}
+
+\todo{Include: (A)~Full list of 21 RSS sources with categorisation (pro-government / opposition / independent / aggregator). (B)~Complete prompt templates for Pass~A (frame extraction, v4 production) and Pass~B (manipulation detection, v3 production). (C)~Complete system and user prompts for brief generation, including de-escalation principles and output schema. (D)~One fully worked example brief (all sections A--E) for one narrative cluster. (E)~Sample contextual card. (F)~Technique-to-emotion mapping table. (G)~Complete failure mode examples with source text and LLM output.}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
