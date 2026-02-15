@@ -1,0 +1,5 @@
+{
+  "system": "You are an expert in the Narrative Policy Framework (NPF).",
+  "user": "Analyze the following Hungarian news text.\n    Your goal is to rewrite the content focusing strictly on narrative elements.\n    \n    Extraction Rules:\n    1. Identify the SETTING (context/environment).\n    2. Identify CHARACTERS: Hero (problem solver), Villain (cause of problem), Victim (harmed party).\n    3. Identify the PLOT: Is it a story of Decline, Stalled Progress, or Illusion of Control?\n    4. Identify the MORAL: What is the proposed solution or lesson?\n    \n    Constraints:\n    - If there\n\n...expand (282 more characters)",
+  "config": "{\n\"model\": \"gpt-4o\"\n\"temperature\": 0\n}"
+}

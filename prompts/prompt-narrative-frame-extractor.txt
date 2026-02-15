@@ -1,0 +1,138 @@
+Chat prompt
+system
+
+"You are performing narrative analysis grounded in the Narrative Policy Framework (NPF).
+Your task is to extract atomic narrative elements from a Hungarian news article.
+These elements are analytical abstractions for narrative intelligence and escalation analysis,
+not factual event logs and not moral or legal judgments."
+user
+
+"# TASK
+Extract atomic narrative elements from the article below. Follow the schema exactly. Every field is required — use null where appropriate but never omit a field.
+
+# SCHEMA (all fields mandatory)
+```json
+{
+  "narrative_elements": [
+    {
+      "actor": "exact surface form as in text",
+      "actor_type": "individual | institution | group | abstract | media | unspecified",
+
+      "speaker_role": "hero_narrator | narrator | neutral | unclear",
+      // Who is the speaker performing as? If mobilising, defending, or positioning as protector → hero_narrator. If reporting → narrator. If ambiguous → unclear.
+
+      "portrayed_role": "hero | villain | victim | narrator | neutral | unclear",
+      // How does the TEXT construct this actor? Not your judgment. Must be supported by evidence_span.
+
+      "narrative_function": "claim | evaluation | threat | mobilisation | warning | policy_promise",
+      // MANDATORY. Choose ONE. See decision table below. Do NOT use background or logistics — those should not be extracted.
+
+      "action_or_claim": "what the actor does, says, or is described as doing",
+
+      "target": "exact surface form, or null",
+      "target_type": "individual | institution | group | abstract | unspecified | null",
+      "portrayed_target_role": "hero | villain | victim | threat | proxy | neutral | unclear | null",
+      // threat = trigger entity that causes catastrophe; proxy = stands in for a larger villain
+
+      "causal_claim": {
+        "text": "explicit causal statement from the text, or null",
+        "causal_marker_surface": "because | therefore | if | when | so_that | implied | null",
+        // Use the actual logical connector. Not grammatical particles (hogy, onnan, ami are NOT causal markers unless they introduce a cause-effect).
+        "causal_relation_type": "threat | prevention | retaliation | inevitability | zero_sum | justification | null"
+        // What kind of causal logic? threat = X causes harm; prevention = X stops harm; justification = X explains Y.
+      },
+
+      "normative_direction": "explicit demand, prohibition, or call — or null",
+      "normative_type": "prohibition | obligation | encouragement | warning | prediction | null",
+      // prohibition = must NOT; obligation = must; encouragement = should/rally; warning = if not, then harm; prediction = will happen
+
+      "constructed_audience": "explicit in-group label from the text (e.g. 'mi', 'magyarok', 'fiatalok'), or null",
+      // Only if the text explicitly constructs a 'we' or addresses a defined group.
+
+      "attribution": "direct_quote | attributed_claim | journalistic_paraphrase | implicit_frame",
+      "evidence_span": "short quoted fragment in original Hungarian",
+      "confidence": "high | medium | low"
+      // high = explicit, central, unambiguous. medium = clear but secondary or compressed. low = implied or structurally incomplete.
+    }
+  ]
+}
+```
+
+# DECISION TABLE: narrative_function
+| If the element... | → assign |
+|---|---|
+| Asserts something as fact or history | claim |
+| Judges an actor, event, or state as good/bad/unfair | evaluation |
+| Frames conditional or actual harm ("if X then catastrophe") | threat |
+| Calls for resistance, action, opposition, or rally | mobilisation |
+| Frames conditional or preventative danger ("beware of X") | warning |
+| Commits to a future action, programme, or pledge | policy_promise |
+| Is purely logistical (travel, scheduling) or background (context, history) with no narrative pressure | **DO NOT EXTRACT** |
+
+# DECISION TABLE: confidence
+| Condition | → assign |
+|---|---|
+| Central claim, direct quote, unambiguous framing | high |
+| Secondary point, condensed paraphrase, or one of several merged claims | medium |
+| Implied, structurally incomplete, or analytically debatable | low |
+
+# WORKED EXAMPLE
+Input fragment: „A magyar kormány ellen nem nagy kunszt lázadni, lázadjatok Brüsszel ellen, onnan fenyegetnek minket" – üzente a fiataloknak a kormányfő.
+
+Correct extraction:
+```json
+{
+  "actor": "Orbán Viktor",
+  "actor_type": "individual",
+  "speaker_role": "hero_narrator",
+  "portrayed_role": "hero",
+  "narrative_function": "mobilisation",
+  "action_or_claim": "lázadjatok Brüsszel ellen, onnan fenyegetnek minket",
+  "target": "Brüsszel",
+  "target_type": "institution",
+  "portrayed_target_role": "villain",
+  "causal_claim": {
+    "text": "onnan fenyegetnek minket",
+    "causal_marker_surface": "implied",
+    "causal_relation_type": "threat"
+  },
+  "normative_direction": "lázadjatok Brüsszel ellen",
+  "normative_type": "encouragement",
+  "constructed_audience": "fiatalok",
+  "attribution": "direct_quote",
+  "evidence_span": "lázadjatok Brüsszel ellen, onnan fenyegetnek minket",
+  "confidence": "high"
+}
+```
+
+Why this is correct:
+- speaker_role = hero_narrator because Orbán positions himself as rallying protector
+- narrative_function = mobilisation because it is a direct call to act
+- portrayed_target_role = villain because Brüsszel is framed as the source of threat
+- causal_relation_type = threat because the causal logic is "they threaten us"
+- normative_type = encouragement because it's a rallying imperative, not a prohibition
+- constructed_audience = fiatalok because the text explicitly says "üzente a fiataloknak"
+
+# RULES (compact)
+1. Extract only what is stated or linguistically signalled. No inferred intent, ideology, or hidden strategy.
+2. One element = one actor + one claim/evaluation/threat/call. Do not merge unrelated claims.
+3. Use exact surface forms for actors and targets. Do not normalise or translate names.
+4. Do NOT extract background or logistics that carry no narrative pressure (historical recall, travel plans, procedural facts). If in doubt, omit.
+5. Assign portrayed_role only where the text constructs it. If a speaker mobilises, defends, or protects → hero or hero_narrator for speaker_role. If weak or mixed → unclear.
+6. Populate causal_claim only for explicit causation. Grammatical connectors (hogy, ami, amelyből) are NOT causal markers unless they introduce cause→effect logic. If causality is implied but weak, use causal_marker_surface = "implied" and confidence = "low".
+7. Populate normative_direction only for explicit demands, prohibitions, obligations, or calls. "Therefore we must" is only valid if explicitly stated.
+8. Do NOT infer hostility from criticism. Do NOT assign hero/villain to journalists. Do NOT invent policy goals.
+
+# OUTPUT
+Valid JSON only. Hungarian for text fields. English for labels. No commentary outside JSON.
+
+Article:
+{{article}}"
+Variables
+article
+Config
+
+{
+model: "gpt-4o"
+temperature: 0
+}
