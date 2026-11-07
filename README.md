@@ -16,12 +16,13 @@ This public companion supports inspection of the method and its building blocks.
 | --- | --- |
 | [Narrative-frame prompt](prompts/prompt-narrative-frame-extractor.txt) | Actors, portrayed roles, actions, targets and causal claims, with instructions to avoid unsupported inference. |
 | [Manipulation prompt](prompts/prompt-manipulation-extractor.txt) | The technique-extraction instructions and output structure. |
-| [Brief prompt](prompts/prompt-npf-summary.txt) | The proposed narrative-intelligence brief structure and synthesis instructions. |
+| [Brief system instructions](prompts/system_prompt.txt) and [brief input/output template](prompts/user_prompt_template.txt) | The five-section narrative-intelligence brief design, evidence constraints and contextual-card inputs. |
+| [Article-summary export](prompts/prompt-npf-summary.txt) | A separate NPF article-summary prompt. This saved export is truncated and is not the brief-generation template. |
 | [Evaluation prompt](prompts/prompt-npf-judge.txt) | The criteria supplied to the model judge; this is an evaluation instrument, not a set of human labels or measured results. |
 | [Contextual cards](contextual_cards/) | Domain-specific context supplied for the research design. Inspect each card's content and references in context. |
 | [Processing modules](src/political_nlp/) | Article collection, extraction, clustering and report-building code. See the implementation limits below before adapting it. |
 
-The JSON files beside the exported prompt text retain configuration information. The local prompt constants and exported templates are separate artefacts; this repository does not establish that they are interchangeable or identify a complete archived run.
+The JSON files beside the exported prompt text retain configuration information, but valid outer JSON does not establish a complete executable template. The article-summary export preserves truncated text and its configuration is a string. The local prompt constants and exported templates are separate artefacts; this repository does not establish that they are interchangeable or identify a complete archived run.
 
 ## Inspect without provider accounts
 
