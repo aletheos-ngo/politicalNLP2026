@@ -1,295 +1,67 @@
-# politicalNLP2026
+# PoliticalNLP 2026 research companion
 
-**Narrative Intelligence Analysis Pipeline for Hungarian Political Media**
+Prompts, contextual cards and research code accompanying **From News Streams to Narrative Intelligence Briefs: LLM-Assisted Political Discourse Analysis in the Hungarian 2026 Pre-Election Context**, by Ekaterina Loginova, Maksim Ermakov and Stephan Khramov.
 
-A modular Python pipeline for extracting narrative frames from news articles, detecting propaganda manipulation techniques, clustering narratives semantically, and generating intelligence briefs. Built for academic research on political communication.
+[Read the paper](https://lrec.elra.info/lrec2026-ws-politicalnlp-01) · [DOI: 10.63317/228tnds8d6kd](https://doi.org/10.63317/228tnds8d6kd) · [Citation](CITATION.bib) · [Aletheos](https://aletheos.team/)
 
-## Features
+## The research question
 
-- **RSS Feed Monitoring**: Automated collection from 20+ Hungarian news sources
-- **Narrative Frame Extraction**: NPF-based (Narrative Policy Framework) extraction using LLMs
-- **Manipulation Detection**: 25-technique propaganda taxonomy (based on SemEval/SlavicNLP)
-- **Semantic Clustering**: UMAP + HDBSCAN clustering of narrative frames
-- **Intelligence Briefs**: Auto-generated markdown reports with narrative analysis
-- **Langfuse Integration**: Full LLM call tracking, evaluation, and prompt management
+How can a large political-news stream become a structured brief that an analyst can inspect and challenge? The published Hungarian election case study connects narrative-frame extraction, manipulation analysis, clustering and brief generation. Its evaluation and failure analysis concern that study; they do not establish general accuracy for Aletheos tools.
 
-## Installation
+This public companion supports inspection of the method and its building blocks. It does not include the study's article corpus, recorded runs or evaluation annotations, and it is not a frozen end-to-end reproduction package.
 
-### Prerequisites
+## Explore the materials
 
-- Python 3.9+
-- OpenAI API key (for GPT-4o) or OpenRouter/Anthropic API keys
-- (Optional) Langfuse account for tracking and evaluation
+| Material | What to inspect |
+| --- | --- |
+| [Narrative-frame prompt](prompts/prompt-narrative-frame-extractor.txt) | Actors, portrayed roles, actions, targets and causal claims, with instructions to avoid unsupported inference. |
+| [Manipulation prompt](prompts/prompt-manipulation-extractor.txt) | The technique-extraction instructions and output structure. |
+| [Brief prompt](prompts/prompt-npf-summary.txt) | The proposed narrative-intelligence brief structure and synthesis instructions. |
+| [Evaluation prompt](prompts/prompt-npf-judge.txt) | The criteria supplied to the model judge; this is an evaluation instrument, not a set of human labels or measured results. |
+| [Contextual cards](contextual_cards/) | Domain-specific context supplied for the research design. Inspect each card's content and references in context. |
+| [Processing modules](src/political_nlp/) | Article collection, extraction, clustering and report-building code. See the implementation limits below before adapting it. |
 
-### Setup
+The JSON files beside the exported prompt text retain configuration information. The local prompt constants and exported templates are separate artefacts; this repository does not establish that they are interchangeable or identify a complete archived run.
 
-1. Clone the repository:
+## Inspect without provider accounts
+
+Clone the public repository:
+
 ```bash
-git clone https://github.com/yourusername/politicalNLP2026.git
+git clone https://github.com/aletheos-ngo/politicalNLP2026.git
 cd politicalNLP2026
 ```
 
-2. Install dependencies:
+The prompts, cards and code can be read without installing dependencies or adding API keys. To inspect one exported prompt as JSON using Python's standard library:
+
 ```bash
-pip install -r requirements.txt
+python -m json.tool prompts/prompt-narrative-frame-extractor.json
 ```
 
-3. Configure API keys:
+For a citation or comparison, record the exact commit you inspected:
+
 ```bash
-# Copy the example environment file
-cp .env.example .env
-
-# Edit .env and add your API keys
-# OPENAI_API_KEY=sk-your-key-here
-# LANGFUSE_PUBLIC_KEY=pk-your-key-here
-# LANGFUSE_SECRET_KEY=sk-your-key-here
+git rev-parse HEAD
 ```
 
-> **⚠️ IMPORTANT**: Never commit your `.env` file to git! It contains sensitive API keys.
+## Reproducibility and adaptation
 
-## Quick Start
+[Reproducibility notes](docs/reproducibility.md) distinguish the published study, the shared artefacts and the current implementation. They identify concrete integration issues in the entrypoint, parsing and report generation, as well as the missing frozen environment and study records.
 
-### Run the Full Pipeline
+The code is available for inspection, but a full pipeline run has not been validated as part of this handoff. The old full-pipeline quick-start is therefore replaced by the inspection path above. Running or adapting the processing modules requires reviewing dependencies, provider/model configuration, input permissions and costs first. The source uses `datetime.UTC`, which requires Python 3.11 or newer; this is a source requirement, not a tested dependency environment.
 
-```python
-from src.political_nlp.main import run_full_pipeline
+Some processing stages call external AI services or download models. Reading the companion materials does neither. Keep credentials outside version control and use only material permitted for the chosen processing and provider arrangement.
 
-# Run complete pipeline (fetch → narratives → manipulation → clustering → brief)
-results = run_full_pipeline(
-    output_dir="output",
-    fetch_limit=10  # Limit to 10 articles for testing
-)
+## Cite the study
 
-print(f"Analyzed {results['articles_fetched']} articles")
-print(f"Found {results['clusters_found']} narrative clusters")
-print(f"Brief: {results['brief_generated']}")
-```
+Use the publication's author names and bibliographic record. A ready-to-copy entry is in [CITATION.bib](CITATION.bib):
 
-### Run Individual Steps
+> Ekaterina Loginova, Maksim Ermakov and Stephan Khramov. 2026. *From News Streams to Narrative Intelligence Briefs: LLM-Assisted Political Discourse Analysis in the Hungarian 2026 Pre-Election Context.* Proceedings of the 3rd Workshop on Natural Language Processing for Political Sciences (PoliticalNLP 2026) @ LREC 2026, pages 1–16. European Language Resources Association. DOI: 10.63317/228tnds8d6kd.
 
-```python
-from src.political_nlp import (
-    fetch_articles,
-    extract_narratives,
-    detect_manipulation,
-    cluster_narratives,
-    generate_brief
-)
+When discussing the implementation, also link the repository revision you inspected. The publication citation credits the study; it is not a claim that every published experiment can be reproduced from this snapshot.
 
-# 1. Fetch articles from RSS feeds
-df = fetch_articles(output_file="articles.parquet")
+## Reuse and contact
 
-# 2. Extract narrative frames
-df = extract_narratives(df)
+A code or prompt licence has not been specified in this repository. The publication's licensing information is available on the [publisher's page](https://lrec.elra.info/lrec2026-ws-politicalnlp-01); that is a separate publication record.
 
-# 3. Detect manipulation techniques
-df = detect_manipulation(df)
-
-# 4. Cluster narratives
-cluster_df = cluster_narratives(df)
-
-# 5. Generate intelligence brief
-generate_brief(cluster_df, output_file="brief.md")
-```
-
-## Pipeline Architecture
-
-```
-┌─────────────────┐
-│  RSS Feeds      │ ─── 24+ Hungarian news sources
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  Step 1: Article Fetching           │
-│  (newspaper4k, feedparser)           │
-└────────┬────────────────────────────┘
-         │ articles.parquet
-         ▼
-┌─────────────────────────────────────┐
-│  Step 2: Narrative Frame Extraction │
-│  (GPT-4o, NPF schema, Langfuse)     │
-└────────┬────────────────────────────┘
-         │ with_narratives.parquet
-         ▼
-┌─────────────────────────────────────┐
-│  Step 3: Manipulation Detection     │
-│  (GPT-4o, 25-technique taxonomy)    │
-└────────┬────────────────────────────┘
-         │ with_manipulation.parquet
-         ▼
-┌─────────────────────────────────────┐
-│  Step 4: Semantic Clustering        │
-│  (sentence-transformers, HDBSCAN)   │
-└────────┬────────────────────────────┘
-         │ clustered_frames.parquet
-         ▼
-┌─────────────────────────────────────┐
-│  Step 5: Intelligence Brief         │
-│  (Markdown report generation)        │
-└─────────────────────────────────────┘
-         │ intelligence_brief.md
-```
-
-## Configuration
-
-### Environment Variables
-
-All sensitive configuration is loaded from `.env`:
-
-```env
-# Required: LLM API Keys
-OPENAI_API_KEY=sk-...
-OPENROUTER_API_KEY=sk-...        # Alternative to OpenAI
-ANTHROPIC_API_KEY=sk-ant-...      # For Claude models
-
-# Optional: Langfuse Tracking
-LANGFUSE_PUBLIC_KEY=pk-...
-LANGFUSE_SECRET_KEY=sk-...
-LANGFUSE_HOST=https://cloud.langfuse.com
-
-# Model Selection
-NARRATIVE_MODEL=gpt-4o
-MANIPULATION_MODEL=gpt-4o
-BRIEF_MODEL=claude-3-5-sonnet-20241022
-EMBEDDING_MODEL=paraphrase-multilingual-mpnet-base-v2
-
-# Rate Limiting
-REQUEST_DELAY=2.0                 # Seconds between API calls
-
-# Clustering Parameters
-MIN_CLUSTER_SIZE=15
-MIN_SAMPLES=5
-```
-
-## Project Structure
-
-```
-politicalNLP2026/
-├── src/
-│   └── political_nlp/
-│       ├── __init__.py           # Package exports
-│       ├── config.py              # Configuration management
-│       ├── main.py                # Pipeline orchestrator
-│       ├── utils/
-│       │   ├── llm_client.py      # Unified LLM wrapper
-│       │   └── data_io.py         # DataFrame utilities
-│       └── pipeline/
-│           ├── rss_fetcher.py               # Article collection
-│           ├── narrative_extraction.py      # NPF frame extraction
-│           ├── manipulation_detection.py    # Propaganda techniques
-│           ├── clustering.py                # HDBSCAN clustering
-│           └── brief_generation.py          # Report generation
-├── data/                         # Data files (gitignored)
-├── output/                       # Pipeline outputs (gitignored)
-├── requirements.txt              # Python dependencies
-├── .env.example                  # Environment variable template
-└── README.md                     # This file
-```
-
-## Methodology
-
-### Narrative Frame Extraction (NPF)
-
-Based on the **Narrative Policy Framework** (Jones & McBeth, 2010), we extract atomic narrative elements:
-
-- **Actors** and their portrayed roles (hero/villain/victim)
-- **Actions** and claims
-- **Targets** and their roles
-- **Causal claims** (threat/prevention/justification logic)
-- **Normative directions** (obligations, prohibitions, calls to action)
-- **Constructed audiences** (in-groups, "we" references)
-
-### Manipulation Technique Taxonomy
-
-25 propaganda techniques from SemEval/SlavicNLP framework:
-
-- **Emotional Appeals**: appeal_to_authority, appeal_to_fear, appeal_to_pity, appeal_to_values, appeal_to_time
-- **Logical Fallacies**: false_dilemma, causal_oversimplification, consequential_oversimplification, straw_man, red_herring
-- **Rhetorical Devices**: loaded_language, name_calling_labelling, slogan, flag_waving, exaggeration_minimisation
-- **Distraction**: whataboutism, obfuscation, conversation_killer
-- **Social Proof**: bandwagon, guilt_by_association
-- **Character Attacks**: questioning_reputation, doubt
-- **Others**: appeal_to_hypocrisy, false_equivalence, repetition
-
-## Advanced Usage
-
-### Custom RSS Feeds
-
-```python
-from src.political_nlp import fetch_articles
-
-custom_feeds = [
-    "https://example.com/rss",
-    "https://another-site.com/feed"
-]
-
-df = fetch_articles(feed_urls=custom_feeds)
-```
-
-### Skip Pipeline Steps
-
-```python
-from src.political_nlp.main import run_full_pipeline
-
-# Start from existing data, skip fetching
-results = run_full_pipeline(
-    input_file="data/articles.parquet",
-    skip_steps=['fetch']
-)
-```
-
-### Custom Clustering Parameters
-
-```python
-from src.political_nlp import cluster_narratives
-
-cluster_df = cluster_narratives(
-    df,
-    min_cluster_size=20,      # Larger clusters
-    min_samples=10,
-    embedding_model='paraphrase-multilingual-MiniLM-L12-v2'  # Faster model
-)
-```
-
-## Security & Best Practices
-
-### API Key Security
-
-- **Never commit API keys** to version control
-- Use `.env` for all sensitive configuration
-- `.gitignore` already excludes `.env` files
-- Rotate keys if accidentally exposed
-
-### Data Privacy
-
-- Large `.parquet` files are gitignored
-- Add `data/` to `.gitignore` if storing sensitive articles
-- Be mindful of news article copyright when sharing datasets
-
-## Citation
-
-If you use this pipeline in academic research, please cite:
-
-```bibtex
-@software{politicalNLP2026,
-  title={PoliticalNLP 2026: Narrative Intelligence Analysis Pipeline},
-  author={Your Name},
-  year={2026},
-  url={https://github.com/yourusername/politicalNLP2026}
-}
-```
-
-## License
-
-[Add your license here]
-
-## Acknowledgments
-
-- **Narrative Policy Framework**: Jones & McBeth (2010)
-- **SemEval Propaganda Detection**: Da San Martino et al. (2020)
-- **Tools**: Langfuse, sentence-transformers, HDBSCAN, newspaper4k
-
-## Support
-
-For issues, questions, or contributions, please open an issue on GitHub.
+For research collaboration, reproduction questions or reuse enquiries, contact [hello@aletheos.team](mailto:hello@aletheos.team). Implementation issues can be reported through the repository's issue tracker.
