@@ -4,6 +4,12 @@ Prompts, contextual cards and research code accompanying **From News Streams to 
 
 [Read the paper](https://lrec.elra.info/lrec2026-ws-politicalnlp-01) · [DOI: 10.63317/228tnds8d6kd](https://doi.org/10.63317/228tnds8d6kd) · [Citation](CITATION.bib) · [Aletheos](https://aletheos.team/)
 
+## Who this is for and how to use it
+
+For researchers inspecting the published method, developers assessing a prompt/processing building block for another study, and educators discussing evidence and failure analysis. Start with the question, inspect the relevant prompt/card/code and its limits, then record the exact commit and missing inputs before adaptation.
+
+Use cases include examining how a narrative-frame or brief template represents evidence, comparing the research design with manual/alternative analysis, and identifying which corpus/run/annotation material a reproduction would require. This is a research artifact, not a hosted monitoring product or advertised subscription. The study, shared materials and a new reproduction/validated deployment remain separate.
+
 ## The research question
 
 How can a large political-news stream become a structured brief that an analyst can inspect and challenge? The published Hungarian election case study connects narrative-frame extraction, manipulation analysis, clustering and brief generation. Its evaluation and failure analysis concern that study; they do not establish general accuracy for Aletheos tools.
